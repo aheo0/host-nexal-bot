@@ -8,7 +8,8 @@ class Help(Command):
     async def run(self):
         if (len(self.message_keys) == 0):
             help_messages = {
-                "help": "Lists possible commands"
+                "help": "Lists possible commands",
+                "afk": "Starts up an AFK"
             }
             title = "nexal Commands"
             description = "Note: all commands must start with `.nexal` For further information on individual commands, type -h after the command, i.e. `.nexal help -h`"
