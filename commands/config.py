@@ -34,6 +34,10 @@ class Setup(Command):
                     json.dump({}, f)
                 with open(dir_path + "/run-logs.json", "w") as f:
                     json.dump({}, f)
+                with open("data/copy-reqs.json") as f:
+                    copy_reqs = json.load(f)
+                with open(dir_path + "/reqs.json", "w") as f:
+                    json.dump(copy_reqs, f)
                 
                 title = "Setup complete!"
                 description = "Now add nexal admins, voice channels, and text channels for the bot commands!"
@@ -763,7 +767,7 @@ class Role(Command):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
             with open("data/guilds.json") as f:
                 data = json.load(f)
-            LNG = data[str(self.message.guild.id)]["lounge"]
+            ROLE = data[str(self.message.guild.id)]["reg-role"]
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):

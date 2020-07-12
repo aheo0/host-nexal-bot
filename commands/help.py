@@ -31,7 +31,7 @@ class Help(Command):
                     "endrun": "Ends run. ie. .nexal_endrun_1_s or .nexal_endrun_1_f",
                 },
                 "PARSE": {
-                    "parse": "Parses raiders for requirements. ie. .nexal_parse_1 and add a screenshot of the /who command with a black background",
+                    "parse": "Parses raiders for requirements. ie. .nexal_parse_1 and add a screenshot of the /who command with a black background. You can also list the raiders after the command separated by either a comma, period, space, or a newline ie. .nexal_parse_1_MeApollo_nexal",
                     "auto-parse": "Turns on or off the bot's auto-parsing feature of the vc for requirements which will activate \"auto-time\" amount of seconds after afk has ended. ie. .nexal_auto-parse_on",
                     "auto-time": "Amount of seconds to wait before bot auto-parses, if auto-parsing is turned on. ie. .nexal_auto-time_set_30",
                     "vc": "Lists everyone currently in the voice channel. This can be used to track down alts of crashers/draggers in vc. ie. .nexal_vc_1"
@@ -42,8 +42,7 @@ class Help(Command):
             description = "Note: all commands must start with `.nexal` \
 For further information on individual commands, type -h after the command, i.e. `.nexal help -h`. \
 In each code block example, *replace underscores (_) with spaces ( )*. \
-Only nexal admins may run commands with **[*]**. \
-Commands with [/] afterwards have more arguments to the command that are further explained in their respective help menus."
+Only nexal admins may run commands with **[*]**."
             fields = []
             for i in help_messages:
                 name = i

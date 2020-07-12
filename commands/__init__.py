@@ -73,5 +73,10 @@ class Main(SuperCommand):
         #    await afk.Endrun(self.message, self.message_keys[1:]).run()
         #    return
 
+        # Parse
+        if (self.message_keys[0] == "parse"):
+            await parse.Parse(self.message, self.message_keys[1:]).run()
+            return
+
     async def reaction(self, reaction, user):
         await afk.KeyReact(reaction, user).run()
