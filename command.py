@@ -65,3 +65,18 @@ class Command():
 class SuperCommand(Command):
     def __init__(self, message, message_keys):
         super().__init__(message, message_keys)
+
+class Variables():
+    def __init__(self):
+        self.types = ["c", "v", "st", "e", "x"]
+
+    def get_dir_path(self, guild_id):
+        return("data/" + str(guild_id) + "/")
+
+    def check_nexal_admin(self, guild_id, member_id):
+        with open()
+
+    async def not_nexal_admin_speech(self, channel, member):
+        
+
+vars = Variables()
