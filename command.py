@@ -1,4 +1,4 @@
-import discord
+import discord, json
 
 def create_embed(type_="DEFAULT", fields={}):
     embed_dict = {
@@ -18,6 +18,10 @@ def create_embed(type_="DEFAULT", fields={}):
         pass
     if (type_ == "BASIC"):
         embed_dict["color"] = 5290571
+    if (type_ == "ERROR"):
+        embed_dict["color"] = 15861040
+    if (type_ == "HELP-MENU"):
+        embed_dict["color"] = 6567912
     
     for i in fields:
         embed_dict[i] = fields[i]
@@ -74,9 +78,13 @@ class Variables():
         return("data/" + str(guild_id) + "/")
 
     def check_nexal_admin(self, guild_id, member_id):
-        with open()
+        with open("data/guilds.json") as f:
+            data = json.load(f)
+        return member_id in data[str(guild_id)]["admins"]
 
     async def not_nexal_admin_speech(self, channel, member):
-        
+        title = "Permission Error"
+        description = "You need nexal admin permissions to run this command!"
+        await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
 
 vars = Variables()

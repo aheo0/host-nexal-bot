@@ -54,12 +54,8 @@ Commands with [/] afterwards have more arguments to the command that are further
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
         if (self.message_keys[0] == "-h"):
-            help_messages = {
-                "help": self.help_text
-            }
             title = "Info on command `help`"
-            description = ""
-            fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
-            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            description = "Lists possible commands"
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
             return
             

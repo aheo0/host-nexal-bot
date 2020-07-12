@@ -20,16 +20,19 @@ class Main(SuperCommand):
 
         NEXAL_ADMIN = vars.check_nexal_admin(self.message.guild.id, self.message.author.id)
 
-        # Setup
+        # Config
         if NEXAL_ADMIN:
             if (self.message_keys[0] == "setup"):
-                await setup.Setup(self.message, self.message_keys[1:]).run()
+                await config.Setup(self.message, self.message_keys[1:]).run()
                 return
-            IS_BOT_SETUP = await setup.Setup(self.message, self.message_keys[1:]).check()
+            IS_BOT_SETUP = await config.Setup(self.message, self.message_keys[1:]).check()
             if not IS_BOT_SETUP:
                 return
             if (self.message_keys[0] == "delete-data"):
-                await setup.Setup(self.message, self.message_keys[1:]).delete_data()
+                await config.Setup(self.message, self.message_keys[1:]).delete_data()
+                return
+            if (self.message_keys[0] == "prefix"):
+                await config.Prefix(self.message, self.message_keys[1:]).run()
                 return
         
         # AFK

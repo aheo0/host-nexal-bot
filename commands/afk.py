@@ -157,7 +157,7 @@ class Endafk(Command):
             title = "Info on command `endrun`"
             description = ""
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
-            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description, "fields": fields}))
             return
 
 class Endrun(Command):
@@ -198,7 +198,7 @@ class Endrun(Command):
                 "help": self.help_text
             }
             title = "Info on command `endrun`"
-            description = ""
+            description = "Ends run"
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
