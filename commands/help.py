@@ -8,8 +8,9 @@ class Help(Command):
     async def run(self):
         if (len(self.message_keys) == 0):
             help_messages = {
-                "HELP": {
-                    "help": "Lists possible commands"
+                "MAIN": {
+                    "help": "Lists possible commands",
+                    "ping": "Replies pong! Can be used to check if bot is online"
                 },
                 "[*] CONFIG": {
                     "setup": "Setups up bot in the server",
@@ -18,21 +19,22 @@ class Help(Command):
                     "admins": "Modifies or lists the nexal admins list",
                     "bcs": "Modifies or lists the bot command channels list",
                     "vcs": "Modifies or lists the raiding voice channels list",
-                    "rsa": "Modifies or shows the rsa channel. ie. .nexal_rsa_1234567890 to change the rsa channel to the one with ID 123456789",
-                    "lng": "Modifies or shows the AFK voice channel. ie. .nexal_lng_1234567890 to change the rsa channel to the one with ID 123456789. Set ID to 0 to just disconnect raiders. For servers without an AFK channel, this can just be Lounge if it exists",
-
+                    "rsa": "Modifies or shows the rsa channel. ie. .nexal_rsa_set_1234567890 to change the rsa channel to the one with ID 123456789",
+                    "lng": "Modifies or shows the AFK voice channel. ie. .nexal_lng_set_1234567890 to change the rsa channel to the one with ID 123456789. Set ID to 0 to just disconnect raiders. For servers without an AFK channel, this can just be Lounge if it exists",
+                    "role": "Modifies or shows the name of the verified role. ie. .nexal_role_set_Verified_Raider if the name of the role with general permissions is \"Verified Raider\""
                 },
                 "AFK-CHECK": {
-                    "type": "[*] Sets the default type of afk checks. A cult headcount can then be started with .nexal_hc rather than .nexal_hc_c ie. nexal_type_set_c",
-                    "hc": "Starts up an HC. ie. .nexal_hc",
-                    "afk": "Starts up an AFK. ie. .nexal_afk_1_AustraliaSouthEast_Down Do .nexal_afk_-h for more specific commands.",
+                    "type": "[*] Sets the default type of afk checks. A cultist hideout headcount can then be started with .nexal_hc rather than .nexal_hc_c ie. nexal_type_set_c",
+                    "hc": "Starts up an headcount. ie. .nexal_hc or .nexal_c_hc for a cultist hideout headcount. Type .nexal_hc_-h to see the different HC/AFKs you can start",
+                    "afk": "Starts up an AFK check. ie. .nexal_afk_1_AustraliaSouthEast_Down",
                     "endafk": "Ends AFK. ie. .nexal_endafk_1",
                     "endrun": "Ends run. ie. .nexal_endrun_1_s or .nexal_endrun_1_f",
                 },
                 "PARSE": {
                     "parse": "Parses raiders for requirements. ie. .nexal_parse_1 and add a screenshot of the /who command with a black background",
                     "auto-parse": "Turns on or off the bot's auto-parsing feature of the vc for requirements which will activate \"auto-time\" amount of seconds after afk has ended. ie. .nexal_auto-parse_on",
-                    "auto-time": "Amount of seconds to wait before bot auto-parses, if auto-parsing is turned on. ie. .nexal_auto-time_set_30"
+                    "auto-time": "Amount of seconds to wait before bot auto-parses, if auto-parsing is turned on. ie. .nexal_auto-time_set_30",
+                    "vc": "Lists everyone currently in the voice channel. This can be used to track down alts of crashers/draggers in vc. ie. .nexal_vc_1"
                 }
 
             }
@@ -59,3 +61,4 @@ Commands with [/] afterwards have more arguments to the command that are further
             await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
             return
             
+

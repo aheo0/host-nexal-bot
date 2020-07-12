@@ -12,42 +12,66 @@ class Main(SuperCommand):
         if (self.message_keys[0] == ""):
             pass
             return
+
+        # Check Bot Command Channel
+        with open("data/guilds.json") as f:
+            data = json.load(f)
+        if (str(self.message.guild.id) in data and self.message.channel.id not in data[str(self.message.guild.id)]["bcs"]):
+            return
         
         # Help
         if (self.message_keys[0] == "help"):
             await help.Help(self.message, self.message_keys[1:]).run()
             return
 
-        NEXAL_ADMIN = vars.check_nexal_admin(self.message.guild.id, self.message.author.id)
-
         # Config
-        if NEXAL_ADMIN:
-            if (self.message_keys[0] == "setup"):
-                await config.Setup(self.message, self.message_keys[1:]).run()
-                return
-            IS_BOT_SETUP = await config.Setup(self.message, self.message_keys[1:]).check()
-            if not IS_BOT_SETUP:
-                return
-            if (self.message_keys[0] == "delete-data"):
-                await config.Setup(self.message, self.message_keys[1:]).delete_data()
-                return
-            if (self.message_keys[0] == "prefix"):
-                await config.Prefix(self.message, self.message_keys[1:]).run()
-                return
+        if (self.message_keys[0] == "setup"):
+            await config.Setup(self.message, self.message_keys[1:]).run()
+            return
+        IS_BOT_SETUP = await config.Setup(self.message, self.message_keys[1:]).check()
+        if not IS_BOT_SETUP:
+            return
+        if (self.message_keys[0] == "delete-data"):
+            await config.Setup(self.message, self.message_keys[1:]).delete_data()
+            return
+        if (self.message_keys[0] == "prefix"):
+            await config.Prefix(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "admin"):
+            await config.Admin(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "bcs"):
+            await config.BCS(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "vcs"):
+            await config.VCS(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "rsa"):
+            await config.RSA(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "lng"):
+            await config.LNG(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "role"):
+            await config.Role(self.message, self.message_keys[1:]).run()
+            return
         
         # AFK
-        if (self.message_keys[0] == "hc"):
-            await afk.Hc(self.message, self.message_keys[1:]).run()
+        if (self.message_keys[0] == "type"):
+            await afk.Type(self.message, self.message_keys[1:]).run()
             return
-        if (self.message_keys[0] == "afk"):
-            await afk.Afk(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "endafk"):
-            await afk.Endafk(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "endrun"):
-            await afk.Endrun(self.message, self.message_keys[1:]).run()
-            return
+        #if (self.message_keys[0] == "hc"):
+        #    await afk.Hc(self.message, self.message_keys[1:]).run()
+        #    return
+        #if (self.message_keys[0] == "afk"):
+        #    await afk.Afk(self.message, self.message_keys[1:]).run()
+        #    return
+        #if (self.message_keys[0] == "endafk"):
+        #    await afk.Endafk(self.message, self.message_keys[1:]).run()
+        #    return
+        #if (self.message_keys[0] == "endrun"):
+        #    await afk.Endrun(self.message, self.message_keys[1:]).run()
+        #    return
 
     async def reaction(self, reaction, user):
         await afk.KeyReact(reaction, user).run()
