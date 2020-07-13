@@ -37,6 +37,7 @@ class Parse(Command):
     def checkStats(self, guild, igns, users=None, dung_type="c", vet=False):
         with open(vars.get_dir_path(guild) + "reqs.json") as f:
             banned = json.load(f)
+        print(vet)
         if vet:
             banned = banned["-1"]
         else:
