@@ -246,12 +246,10 @@ class Parse(Command):
                 pil_image = Image.open(BytesIO(requests.get(self.message.attachments[0].url).content))
                 #ocr_text = pytesseract.image_to_string(pil_image, config='--psm 6 --oem 0 tessedit_char_whitelist=1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM():')
                 ocr_text = pytesseract.image_to_string(pil_image)
-                print(ocr_text)
                 if (":" in ocr_text):
-                    ocr_text = ocr_text.split(":")[1:]
+                    ocr_text = " ".join(ocr_text.split(":")[1:])
                 raiders_list = ocr_text.replace("\n", " ").replace(",", " ").replace(".", " ").replace("  ", " ")
                 raiders = re.sub(" +", " ", raiders_list).split(" ")
-                print(raiders)
 
             with open("data/guilds.json") as f:
                 d = json.load(f)
