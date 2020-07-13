@@ -181,7 +181,6 @@ class Parse(Command):
 
             if ((len(self.message_keys) > 1 or len(self.message.attachments) > 0)):
                 # Check Crashers
-                staffs = []
                 for i in raiders:
                     crashing = True
                     id = 0
@@ -192,7 +191,8 @@ class Parse(Command):
                             staff = True
                         alts = discord_name.split(" | ")
                         if (staff):
-                            alts[0] = alts[0][1:]
+                            while alts[0][0] not in 'qwertyuiopasdfghjklzxcvbnm':
+                                alts[0] = alts[0][1:]
                         if (i.lower() in alts):
                             crashing = False
                             id = j.id
