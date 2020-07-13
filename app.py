@@ -32,8 +32,8 @@ async def on_message(message):
         message_keys = message.content[PREFIX_LEN:].split(" ")
         await commands.Main(message, message_keys).run()
 
-@client.event
-async def on_reaction_add(reaction, user):
-    await commands.Main().reaction(reaction, user)
+#@client.event
+#async def on_reaction_add(reaction, user):
+#    await commands.Main().reaction(reaction, user)
 
 client.run(DISCORD_TOKEN)

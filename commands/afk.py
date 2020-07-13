@@ -64,7 +64,7 @@ class Type(Command):
                     "list": "Displays the default type of AFKs. ie. .nexal_type_list"
                 }
             }
-            title = "Info on command `lng`"
+            title = "Info on command `type`"
             description = "Sets or displays the afk voice channel"
             fields = []
             for i in help_messages:

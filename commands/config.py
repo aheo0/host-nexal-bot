@@ -37,7 +37,7 @@ class Setup(Command):
                 with open("data/copy-reqs.json") as f:
                     copy_reqs = json.load(f)
                 with open(dir_path + "/reqs.json", "w") as f:
-                    json.dump(copy_reqs, f)
+                    json.dump({"-1":copy_reqs}, f)
                 
                 title = "Setup complete!"
                 description = "Now add nexal admins, voice channels, and text channels for the bot commands!"
