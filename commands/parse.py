@@ -246,10 +246,11 @@ class Parse(Command):
                 pil_image = Image.open(BytesIO(requests.get(self.message.attachments[0].url).content))
                 #ocr_text = pytesseract.image_to_string(pil_image, config='--psm 6 --oem 0 tessedit_char_whitelist=1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM():')
                 ocr_text = pytesseract.image_to_string(pil_image)
+                print(ocr_text)
                 if (";" in ocr_text):
-                    ocr_text.split(";")[1:]
+                    " ".join(ocr_text.split(";")[1:])
                 if (":" in ocr_text):
-                    ocr_text.split(":")[1:]
+                    " ".join(ocr_text.split(":")[1:])
                 raiders_list = ocr_text.replace("\n", " ").replace(",", " ").replace(".", " ").replace("  ", " ")
                 raiders = re.sub(" +", " ", raiders_list).split(" ")
                 print(raiders)
@@ -318,7 +319,7 @@ class Parse(Command):
                 for i in server_crashers:
                     temp1.append(i[0])
                     temp2.append(i[1])
-                temp3, only_crashing, crashing_without_reqs, crashing_without_reqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1, dung_typ=self.dung_type, vet=self.vet)
+                temp3, only_crashing, crashing_without_reqs, crashing_without_reqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1, dung_type=self.dung_type, vet=self.vet)
                 for i in temp3:
                     invisible.append(i)
 
@@ -327,11 +328,11 @@ class Parse(Command):
                 for i in non_crashers:
                     temp1.append(i[0])
                     temp2.append(i[1])
-                temp3, temp4, only_noreqs, only_noreqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1, dung_typ=self.dung_type, vet=self.vet)
+                temp3, temp4, only_noreqs, only_noreqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1, dung_type=self.dung_type, vet=self.vet)
                 for i in temp3:
                     invisible.append(i)
 
-                temp3, only_not_in_server, not_in_server_reqs, not_in_server_reqs = self.checkStats(self.message.guild.id, not_in_server, dung_typ=self.dung_type, vet=self.vet)
+                temp3, only_not_in_server, not_in_server_reqs, not_in_server_reqs = self.checkStats(self.message.guild.id, not_in_server, dung_type=self.dung_type, vet=self.vet)
                 for i in temp3:
                     invisible.append(i)
             else:
@@ -347,7 +348,7 @@ class Parse(Command):
                         IGNS.append(k)
                         raiders.append(i.id)
 
-                invisible, temp, only_noreqs, only_noreqs_reasons = self.checkStats(self.message.guild.id, IGNS, raiders, dung_typ=self.dung_type, vet=self.vet)
+                invisible, temp, only_noreqs, only_noreqs_reasons = self.checkStats(self.message.guild.id, IGNS, raiders, dung_type=self.dung_type, vet=self.vet)
                 only_crashing, crashing_without_reqs, only_not_in_server, not_in_server_reqs = [[], [], [], []]
 
             # Send Message
