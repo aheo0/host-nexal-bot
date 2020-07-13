@@ -94,47 +94,35 @@ class Parse(Command):
                 if (not worked):
                     continue
                 if (not (int(stats[2])-int(bonus[2]) == self.max_dps_stats[class_][0])):
-                    if users is None:
-                        doesnt.append(IGN)
-                    else:
-                        doesnt.append([users[i], IGN])
                     reason.append("Att")
                 if (not (int(stats[7])-int(bonus[7]) == self.max_dps_stats[class_][1])):
-                    if users is None:
-                        doesnt.append(IGN)
-                    else:
-                        doesnt.append([users[i], IGN])
                     reason.append("Dex")
                     
                 # Equipment
                 if weapon in banned[class_][0]:
-                    if users is None:
-                        doesnt.append(IGN)
+                    if (weapon == ""):
+                        reason.append("Weapon: not equipped")
                     else:
-                        doesnt.append([users[i], IGN])
-                    words = [i[0].upper() + i[1:] for i in weapon.split("_")]
-                    reason.append("Weapon: " + " ".join(words))
+                        words = [i[0].upper() + i[1:] for i in weapon.split("-")]
+                        reason.append("Weapon: " + " ".join(words))
                 if ability in banned[class_][1]:
-                    if users is None:
-                        doesnt.append(IGN)
+                    if (ability == ""):
+                        reason.append("Ability: not equipped")
                     else:
-                        doesnt.append([users[i], IGN])
-                    words = [i[0].upper() + i[1:] for i in ability.split("_")]
-                    reason.append("Ability: " + " ".join(words))
+                        words = [i[0].upper() + i[1:] for i in ability.split("-")]
+                        reason.append("Ability: " + " ".join(words))
                 if armor in banned[class_][2]:
-                    if users is None:
-                        doesnt.append(IGN)
+                    if (armor == ""):
+                        reason.append("Armor: not equipped")
                     else:
-                        doesnt.append([users[i], IGN])
-                    words = [i[0].upper() + i[1:] for i in armor.split("_")]
-                    reason.append("Armor: " + " ".join(words))
+                        words = [i[0].upper() + i[1:] for i in armor.split("-")]
+                        reason.append("Armor: " + " ".join(words))
                 if ring in banned[class_][3]:
-                    if users is None:
-                        doesnt.append(IGN)
+                    if (ring == ""):
+                        reason.append("Ring: not equipped")
                     else:
-                        doesnt.append([users[i], IGN])
-                    words = [i[0].upper() + i[1:] for i in ring.split("_")]
-                    reason.append("Ring: " + " ".join(words))
+                        words = [i[0].upper() + i[1:] for i in ring.split("-")]
+                        reason.append("Ring: " + " ".join(words))
                 
                 # Meets Reqs
                 if (len(reason) == 0):
@@ -143,6 +131,10 @@ class Parse(Command):
                     else:
                         meets.append([users[i], IGN])
                 else:
+                    if users is None:
+                        doesnt.append(IGN)
+                    else:
+                        doesnt.append([users[i], IGN])
                     reasons.append(reason)
         return ([invisible, meets, doesnt, reasons])
 
@@ -238,6 +230,8 @@ class Parse(Command):
                     temp1.append(i[0])
                     temp2.append(i[1])
                 temp3, only_crashing, crashing_without_reqs, crashing_without_reqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1)
+                print(crashing_without_reqs)
+                print(crashing_without_reqs_reasons)
                 for i in temp3:
                     invisible.append(i)
 

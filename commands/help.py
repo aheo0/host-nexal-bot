@@ -16,7 +16,7 @@ class Help(Command):
                     "setup": "Setups up bot in the server",
                     "delete-data": "Wipes all data the bot has on this server",
                     "prefix": "Modifies or lists the prefix list",
-                    "admins": "Modifies or lists the nexal admins list",
+                    "admin": "Modifies or lists the nexal admins list",
                     "bcs": "Modifies or lists the bot command channels list",
                     "vcs": "Modifies or lists the raiding voice channels list",
                     "rsa": "Modifies or shows the rsa channel. ie. .nexal_rsa_set_1234567890 to change the rsa channel to the one with ID 123456789",
