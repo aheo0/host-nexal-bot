@@ -247,8 +247,7 @@ class Parse(Command):
                 #ocr_text = pytesseract.image_to_string(pil_image, config='--psm 6 --oem 0 tessedit_char_whitelist=1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM():')
                 ocr_text = pytesseract.image_to_string(pil_image)
                 if (":" in ocr_text):
-                    ocr_text = ocr_text.split(":")[1:]
-                    " ".join(ocr_text)
+                    ocr_text = " ".join(ocr_text.split(":")[1:])
                 raiders_list = ocr_text.replace("\n", " ").replace(",", " ").replace(".", " ").replace("  ", " ")
                 raiders = re.sub(" +", " ", raiders_list).split(" ")
 
