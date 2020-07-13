@@ -249,7 +249,11 @@ class Parse(Command):
                 if (":" in ocr_text):
                     ocr_text = " ".join(ocr_text.split(":")[1:])
                 raiders_list = ocr_text.replace("\n", " ").replace(",", " ").replace(".", " ").replace("  ", " ")
-                raiders = re.sub(" +", " ", raiders_list).split(" ")
+                raiders_ = re.sub(" +", " ", raiders_list).split(" ")
+                raiders = []
+                for i in raiders_:
+                    if (i != ""):
+                        raiders.append(i)
 
             with open("data/guilds.json") as f:
                 d = json.load(f)
