@@ -52,7 +52,7 @@ class Hc(Command):
         self.help_text = "Starts up an HC"
 
     async def run(self):
-        if (len(self.message_keys) == 0):
+        if (len(self.message_keys) == 0 or self.message_keys[1] != "-h"):
             title = "HC has been started"
             description = "React to <:ThicketPortal:578181776095051788> if you want to participate and react to <:ThicketKey:578181852154691594> if you are willing to pop. If you are planning to bring melees or a priest, react to the according icons."
             sent = await self.message.guild.get_channel(rsa).send("@here", embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))

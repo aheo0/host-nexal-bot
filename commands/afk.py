@@ -91,7 +91,7 @@ class Hc(Command):
         if (len(self.message_keys) == 0 or self.message_keys[0] != "-h"):
             if (len(self.message_keys) > 0 and self.message_keys[0][0] == "-"):
                 rea_type = self.message_keys[0][1:]
-                if rea_type not in ["c", "v", "st"]:
+                if rea_type not in ["c", "v", "st", "vc"]:
                     title = "Invalid AFK Type"
                     description = "fancy [c] Cultist Hideout, etc printing for the different afk types"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
@@ -117,7 +117,7 @@ class Hc(Command):
 
             title = "HC for `" + dung_name + "` has been started"
             description = "React to " + data["essential"][0] + " if you want to participate and react to " + data["essential"][1] + " if you are willing to pop. If you are planning to bring melees or a priest, react to the according icons."
-            sent = await self.message.guild.get_channel(RSA).send("here", embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+            sent = await self.message.guild.get_channel(RSA).send("@here", embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
             await sent.edit(content="")
             await addReactions(sent, rea_type, "afk")
 
