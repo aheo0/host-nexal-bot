@@ -7,7 +7,7 @@ class Type(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            pyc.get_item([str(self.message.guild.id), "type"], "")
+            TYPE = pyc.get_item([str(self.message.guild.id), "type"], "")
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):

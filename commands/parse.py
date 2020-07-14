@@ -31,7 +31,7 @@ class Parse(Command):
             "Bard": [55, 70]
         }
         self.vet = False
-        self.dung_type = pyc.get_item([str(self.message.guild.id), "type"], [])
+        self.dung_type = pyc.get_item([str(self.message.guild.id), "type"], "")
 
     def checkStats(self, guild, igns, users=None, dung_type="c", vet=False):
         with open("data/reqs.json") as f:
