@@ -121,7 +121,7 @@ class Variables():
                     "type": "service_account",
                     "project_id": "nexal-discord-bot",
                     "private_key_id": os.environ["PYREBASE_PRIVATE_KEY_ID"],
-                    "private_key": os.environ["PYREBASE_PRIVATE_KEY"].replade("\\n", "\n"),
+                    "private_key": os.environ["PYREBASE_PRIVATE_KEY"].replace("\\n", "\n"),
                     "client_email": os.environ["PYREBASE_CLIENT_EMAIL"],
                     "client_id": os.environ["PYREBASE_CLIENT_ID"],
                     "auth_uri": os.environ["PYREBASE_AUTH_URI"],
