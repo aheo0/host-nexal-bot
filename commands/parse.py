@@ -31,16 +31,15 @@ class Parse(Command):
             "Bard": [55, 70]
         }
         self.vet = False
-        with open("data/guilds.json") as f:
-            self.dung_type = json.load(f)[str(self.message.guild.id)]["type"]
+        self.dung_type = pyc.get_item([str(self.message.guild.id), "type"], [])
 
     def checkStats(self, guild, igns, users=None, dung_type="c", vet=False):
-        with open(vars.get_dir_path(guild) + "reqs.json") as f:
+        with open("data/reqs.json") as f:
             banned = json.load(f)
-        if not vet:
-            banned = banned["-1"]
-        else:
-            banned = banned["v"]
+        type_char = dung_type
+        if vet:
+            type_char = "v" + type_char
+        banned = banned[type_char]
         invisible = []
         meets = []
         doesnt = []
@@ -97,7 +96,7 @@ class Parse(Command):
                     invisible.append(IGN)
                     pass
 
-                if (dung_type == "c" and not vet):
+                if (type_char == "c"):
                     # Stats
                     if (not worked):
                         continue
@@ -144,7 +143,7 @@ class Parse(Command):
                         else:
                             doesnt.append([users[i], IGN])
                         reasons.append(reason)
-                if (dung_type == "c" and vet == "v"):
+                if (type_char == "vc"):
                     # Stats
                     if (not worked):
                         continue
@@ -191,7 +190,7 @@ class Parse(Command):
                         else:
                             doesnt.append([users[i], IGN])
                         reasons.append(reason)
-                if (dung_type == "st" and not vet):
+                if (type_char == "st"):
                     # Stats
                     if (not worked):
                         continue
@@ -255,11 +254,8 @@ class Parse(Command):
                     if (i != ""):
                         raiders.append(i)
 
-            with open("data/guilds.json") as f:
-                d = json.load(f)
-
             # People in VC
-            vc_people = self.message.guild.get_channel(d[str(self.message.guild.id)]["vcs"][channel_number]).members
+            vc_people = self.message.guild.get_channel(pyc.get_item([str(self.message.guild.id), "vcs"])[channel_number]).members
 
             crashers = []
             non_crashers = []
@@ -352,7 +348,7 @@ class Parse(Command):
                 only_crashing, crashing_without_reqs, only_not_in_server, not_in_server_reqs = [[], [], [], []]
 
             # Send Message
-            title = "Parse of `" + self.message.guild.get_channel(d[str(self.message.guild.id)]["vcs"][channel_number]).name + "` is done"
+            title = "Parse of `" + self.message.guild.get_channel(pyc.get_item([str(self.message.guild.id), "vcs"], [])[channel_number]).name + "` is done"
             description = "Parse by: " + self.message.author.mention
             send_messages = {}
             if (len(invisible) != 0):
@@ -443,3 +439,6 @@ class Parse(Command):
                 fields.append({"name": name, "value": value, "inline": inline})
             await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description, "fields": fields}))
             return
+
+
+

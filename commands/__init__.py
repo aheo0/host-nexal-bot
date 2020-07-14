@@ -14,9 +14,8 @@ class Main(SuperCommand):
             return
 
         # Check Bot Command Channel
-        with open("data/guilds.json") as f:
-            data = json.load(f)
-        if (str(self.message.guild.id) in data and self.message.channel.id not in data[str(self.message.guild.id)]["bcs"]):
+        if (pyc.search(str(self.message.guild.id), []) and \
+            not pyc.search_val(self.message.channel.id, [str(self.message.guild.id), "bcs"])):
             return
         
         # Help

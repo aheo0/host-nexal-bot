@@ -13,31 +13,11 @@ class Setup(Command):
                 description = "If you wish to re-setup the server, first delete the server's data with the command `.nexal delete-data`."
                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
             else:
-                with open("data/guilds.json", "r") as f:
-                    data = json.load(f)
-                data[str(self.message.guild.id)] = {
-                    "prefix": [],
+                add_data = {
                     "admins": [self.message.author.id],
-                    "rsa": 0,
-                    "bcs": [self.message.channel.id],
-                    "vcs": [],
-                    "lounge": 0,
-                    "reg-role": "",
-                    "type": ""
+                    "bcs": [self.message.channel.id]
                 }
-                with open("data/guilds.json", "w") as f:
-                    json.dump(data, f)
-
-                dir_path = "data/" + str(self.message.guild.id)
-                os.makedirs(dir_path)
-                with open(dir_path + "/afks.json", "w") as f:
-                    json.dump({}, f)
-                with open(dir_path + "/run-logs.json", "w") as f:
-                    json.dump({}, f)
-                with open("data/copy-reqs.json") as f:
-                    copy_reqs = json.load(f)
-                with open(dir_path + "/reqs.json", "w") as f:
-                    json.dump({"-1":copy_reqs}, f)
+                vars.db.child(str(self.message.guild.id)).set(add_data)
                 
                 title = "Setup complete!"
                 description = "Now add nexal admins, voice channels, and text channels for the bot commands!"
@@ -50,10 +30,7 @@ class Setup(Command):
             return
 
     async def check(self, say=True):
-        with open("data/guilds.json") as f:
-            data = json.load(f)
-
-        if str(self.message.guild.id) not in data:
+        if not pyc.search(str(self.message.guild.id), []):
             if say:
                 title = "The nexal bot has not been setup yet!"
                 description = "Type `.nexal setup` to start setting up the nexal bot for this server."
@@ -64,19 +41,11 @@ class Setup(Command):
 
     async def delete_data(self):
         if (len(self.message_keys) == 0):
-            if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+            if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                 await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                 return
-            with open("data/guilds.json", "r") as f:
-                data = json.load(f)
-            data.pop(str(self.message.guild.id))
-            with open("data/guilds.json", "w") as f:
-                json.dump(data, f)
-
-            dir_path = "data/" + str(self.message.guild.id)
-            os.remove(dir_path + "/afks.json")
-            os.remove(dir_path + "/run-logs.json")
-            os.rmdir(dir_path)
+            
+            vars.db.child(str(self.message.guild.id)).remove()
             
             title = "Server data has been wiped!"
             description = "Type `.nexal setup` to re-setup the nexal bot for this server."
@@ -95,20 +64,16 @@ class Prefix(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            PREFIXES = data[str(self.message.guild.id)]["prefix"]
+            PREFIXES = pyc.get_item([str(self.message.guild.id), "prefix"], [])
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = " ".join(self.message_keys[1:])
                         if temp not in PREFIXES:
-                            data[str(self.message.guild.id)]["prefix"].append(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            pyc.child([str(self.message.guild.id), "prefix"]).set(PREFIXES + [temp])
                             
                             title = "Prefix `" + temp + "` has been successfully added"
                             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title}))
@@ -129,14 +94,13 @@ class Prefix(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = " ".join(self.message_keys[1:])
                         if temp in PREFIXES:
-                            data[str(self.message.guild.id)]["prefix"].remove(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            PREFIXES.remove(temp)
+                            pyc.child([str(self.message.guild.id), "prefix"]).set(PREFIXES)
                             
                             title = "Prefix `" + temp + "` has been successfully deleted"
                             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title}))
@@ -197,13 +161,11 @@ class Admin(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            ADMINS = data[str(self.message.guild.id)]["admins"]
+            ADMINS = pyc.get_item([str(self.message.guild.id), "admins"], [])
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -220,9 +182,7 @@ class Admin(Command):
                                 description = "No user with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            data[str(self.message.guild.id)]["admins"].append(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            pyc.child([str(self.message.guild.id), "admins"]).set(ADMINS + [temp])
                             
                             title = "New nexal admin " + self.message.guild.get_member(temp).mention + " has been successfully added"
                             description = self.message.guild.get_member(temp).mention
@@ -245,7 +205,7 @@ class Admin(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -262,9 +222,8 @@ class Admin(Command):
                                 description = "No user with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            data[str(self.message.guild.id)]["admins"].remove(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            ADMINS.remove(temp)
+                            pyc.child([str(self.message.guild.id), "admins"]).set(ADMINS)
                             
                             title = "Nexal admin " + self.message.guild.get_member(temp).mention + " has been successfully deleted"
                             description = self.message.guild.get_member(temp).mention
@@ -326,13 +285,11 @@ class BCS(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            BCS = data[str(self.message.guild.id)]["bcs"]
+            BCS = pyc.get_item([str(self.message.guild.id), "bcs"], [])
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -349,9 +306,7 @@ class BCS(Command):
                                 description = "No channel with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            data[str(self.message.guild.id)]["bcs"].append(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            pyc.child([str(self.message.guild.id), "bcs"]).set(BCS + [temp])
                             
                             title = "New bot command channel " + self.message.guild.get_channel(temp).mention + " has been successfully added"
                             description = self.message.guild.get_channel(temp).mention
@@ -374,7 +329,7 @@ class BCS(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -391,9 +346,8 @@ class BCS(Command):
                                 description = "No channel with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            data[str(self.message.guild.id)]["bcs"].remove(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            BCS.remove(temp)
+                            pyc.child([str(self.message.guild.id), "bcs"]).set(BCS)
                             
                             title = "Bot command channel " + self.message.guild.get_channel(temp).mention + " has been successfully deleted"
                             description = self.message.guild.get_channel(temp).mention
@@ -455,13 +409,11 @@ class VCS(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            VCS = data[str(self.message.guild.id)]["vcs"]
+            VCS = pyc.get_item([str(self.message.guild.id), "vcs"], [])
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -482,10 +434,8 @@ class VCS(Command):
                                 title = "Channel ID Error"
                                 description = "This channel is not a voice channel"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                                return                                
-                            data[str(self.message.guild.id)]["vcs"].append(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                                return
+                            pyc.child([str(self.message.guild.id), "vcs"]).set(VCS + [temp])
                             
                             title = "New raiding voice channel " + self.message.guild.get_channel(temp).mention + " has been successfully added"
                             description = self.message.guild.get_channel(temp).mention
@@ -508,7 +458,7 @@ class VCS(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -525,9 +475,8 @@ class VCS(Command):
                                 description = "No channel with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            data[str(self.message.guild.id)]["vcs"].remove(temp)
-                            with open("data/guilds.json", "w") as f:
-                                json.dump(data, f)
+                            VCS.remove(temp)
+                            pyc.child([str(self.message.guild.id), "vcs"]).set(VCS)
                             
                             title = "Raiding voice channel " + self.message.guild.get_channel(temp).mention + " has been successfully deleted"
                             description = self.message.guild.get_channel(temp).mention
@@ -589,13 +538,11 @@ class RSA(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            RSA = data[str(self.message.guild.id)]["rsa"]
+            RSA = pyc.get_item([str(self.message.guild.id), "rsa"], 0)
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -615,10 +562,8 @@ class RSA(Command):
                             title = "Channel ID Error"
                             description = "This channel is not a text channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                            return                                
-                        data[str(self.message.guild.id)]["rsa"] = temp
-                        with open("data/guilds.json", "w") as f:
-                            json.dump(data, f)
+                            return
+                        pyc.child([str(self.message.guild.id), "rsa"]).set(temp)
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the raiding status announcements channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -677,13 +622,11 @@ class LNG(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            LNG = data[str(self.message.guild.id)]["lounge"]
+            LNG = pyc.get_item([str(self.message.guild.id), "lounge"], [])
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -703,10 +646,8 @@ class LNG(Command):
                             title = "Channel ID Error"
                             description = "This channel is not a voice channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                            return                                
-                        data[str(self.message.guild.id)]["lounge"] = temp
-                        with open("data/guilds.json", "w") as f:
-                            json.dump(data, f)
+                            return
+                        pyc.child([str(self.message.guild.id), "lounge"]).set(temp)
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the afk channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -765,44 +706,30 @@ class Role(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            ROLE = data[str(self.message.guild.id)]["reg-role"]
+            ROLE = pyc.get_item([str(self.message.guild.id), "reg-role"], "")
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
-                        temp = self.message_keys[1]
-                        try:
-                            temp = int(temp)
-                        except:
-                            title = "Channel ID Error"
-                            description = "No channel with this ID exists in this server"
+                        temp = " ".join(self.message_keys[1:])
+                        role_object = vars.get_role(self.message.guild, temp)
+                        if (role_object is None):
+                            title = "Role Name Error"
+                            description = "No role with this name exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if (self.message.guild.get_channel(temp) is None):
-                            title = "Channel ID Error"
-                            description = "No channel with this ID exists in this server"
-                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                            return
-                        if (str(self.message.guild.get_channel(temp).type) != "voice"):
-                            title = "Channel ID Error"
-                            description = "This channel is not a voice channel"
-                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                            return                                
-                        data[str(self.message.guild.id)]["lounge"] = temp
-                        with open("data/guilds.json", "w") as f:
-                            json.dump(data, f)
+                        pyc.child([str(self.message.guild.id), "reg-role"]).set(temp)
                         
-                        title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the afk channel"
-                        description = self.message.guild.get_channel(temp).mention
+                        title = "Role `" + temp + "` has been successfully set as the regular raider role"
+                        role_object = vars.get_role(self.message.guild, temp)
+                        description = role_object.mention if role_object.mentionable else ""
                         await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
                         return
                     else:
-                        title = "Info on command `lng set`"
-                        description = "Sets the afk voice channel. Enter the ID of the voice channel after the command. ie. `.nexal lng set 1234567890`"
+                        title = "Info on command `role set`"
+                        description = "Sets the name of the regular raider role. Enter the name of the role after the command. ie. `.nexal role set Verified Raider`"
                         await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
                         return
                 else:
@@ -811,30 +738,31 @@ class Role(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (LNG == 0):
-                        title = "No AFK Channels are currently set"
-                        description = "Type `.nexal lng set 1234567890`, replacing 1234567890 with the text channel id to set one"
+                    if (ROLE == ""):
+                        title = "No regular raider roles are currently set"
+                        description = "Type `.nexal role set Verified Raider` if regular raiders have the role Verified Raider"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
-                    title = "Current AFK Channel"
-                    description = self.message.guild.get_channel(LNG).mention
+                    title = "Current Regular Raider Role"
+                    role_object = vars.get_role(self.message.guild, ROLE)
+                    description = role_object.mention if role_object.mentionable else ROLE
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
-                    title = "Info on command `lng list`"
-                    description = "Displays the current afk channel. ie. `.nexal lng list`"
+                    title = "Info on command `role list`"
+                    description = "Displays the current raider role. ie. `.nexal role list`"
                     await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
                     return
 
         if (self.message_keys[0] == "-h"):
             help_messages = {
                 "COMMANDS": {
-                    "set": "Sets the afk voice channel. Enter the ID of the voice channel after the command. ie. .nexal_lng_set_1234567890",
-                    "list": "Displays the current afk channel. ie. .nexal_lng_list"
+                    "set": "Sets the name of the regular raider role. Enter the name of the role after the command. ie. .nexal_role_set_Verified_Raider",
+                    "list": "Displays the current raider role. ie. .nexal_role_list"
                 }
             }
-            title = "Info on command `lng`"
-            description = "Sets or displays the afk voice channel"
+            title = "Info on command `role`"
+            description = "Sets or displays the regular raider role name"
             fields = []
             for i in help_messages:
                 name = i

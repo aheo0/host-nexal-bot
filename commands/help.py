@@ -24,7 +24,7 @@ class Help(Command):
                     "role": "Modifies or shows the name of the verified role. ie. .nexal_role_set_Verified_Raider if the name of the role with general permissions is \"Verified Raider\""
                 },
                 "AFK-CHECK": {
-                    "type": "[*] Sets the default type of afk checks. A cultist hideout headcount can then be started with .nexal_hc rather than .nexal_hc_c ie. .nexal_type_set_c",
+                    "type": "[*] Sets the default type of afk checks. A cultist hideout headcount can then be started with .nexal_hc rather than .nexal_hc_c ie. .nexal_type_set_c Type .nexal_type_-h to see all possible afk check types",
                     "hc": "Starts up an headcount. ie. .nexal_hc or .nexal_c_hc for a cultist hideout headcount. Type .nexal_hc_-h to see the different HC/AFKs you can start",
                     "afk": "Starts up an AFK check. ie. .nexal_afk_1_AustraliaSouthEast_Down",
                     "endafk": "Ends AFK. ie. .nexal_endafk_1",

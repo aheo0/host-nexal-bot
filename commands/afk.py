@@ -1,7 +1,5 @@
 from command import *
-import json
-
-
+import json, pyrebase
 
 class Type(Command):
     def __init__(self, message, message_keys):
@@ -9,13 +7,11 @@ class Type(Command):
 
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
-            with open("data/guilds.json") as f:
-                data = json.load(f)
-            TYPE = data[str(self.message.guild.id)]["type"]
+            pyc.get_item([str(self.message.guild.id), "type"], "")
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not vars.check_nexal_admin(self.message.guild.id, self.message.author.id):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -23,10 +19,8 @@ class Type(Command):
                             title = "Type Error"
                             description = "No type exists with those acronyms. Type `.nexal type -h` to learn how to set an AFK type in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                            return                   
-                        data[str(self.message.guild.id)]["type"] = temp
-                        with open("data/guilds.json", "w") as f:
-                            json.dump(data, f)
+                            return
+                        pyc.child([str(self.message.guild.id), "type"]).set(temp)
                         
                         title = "The default AFK type has been set to `" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket"}[temp] + "`"
                         await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title}))
@@ -65,7 +59,7 @@ class Type(Command):
                 }
             }
             title = "Info on command `type`"
-            description = "Sets or displays the afk voice channel"
+            description = "Sets or displays the defautl afk check type"
             fields = []
             for i in help_messages:
                 name = i

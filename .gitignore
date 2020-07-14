@@ -1,3 +1,5 @@
 env
 __pycache__
 bot_token.txt
+pyrebase-config.json
+pyrebase-credentials.json

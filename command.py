@@ -1,4 +1,4 @@
-import discord, json
+import discord, json, os, pyrebase
 
 def create_embed(type_="DEFAULT", fields={}):
     embed_dict = {
@@ -72,21 +72,78 @@ class SuperCommand(Command):
     def __init__(self, message, message_keys):
         super().__init__(message, message_keys)
 
+class PyrebaseCommands():
+    def __init__(self, database):
+        self.db = database
+    def search(self, item, childs):
+        db = self.db
+        for i in childs:
+            db = db.child(i)
+        temp = db.shallow().get().val()
+        if temp is None:
+            return None
+        return item in temp
+    def search_val(self, item, childs):
+        db = self.db
+        for i in childs:
+            db = db.child(i)
+        temp = db.get().val()
+        if temp is None:
+            return None
+        return item in temp
+    def child(self, childs):
+        db = self.db
+        for i in childs:
+            db = db.child(i)
+        return db
+    def get_item(self, childs, if_none=None):
+        data = self.child(childs).get().val()
+        if data is None:
+            return if_none
+        return data
+
 class Variables():
     def __init__(self):
         self.types = ["c", "v", "st", "e", "x"]
-
-    def get_dir_path(self, guild_id):
-        return("data/" + str(guild_id) + "/")
-
-    def check_nexal_admin(self, guild_id, member_id):
-        with open("data/guilds.json") as f:
-            data = json.load(f)
-        return member_id in data[str(guild_id)]["admins"]
+        try:
+            with open("data/pyrebase-config.json") as f:
+                self.pyrebase_config = json.load(f)
+        except:
+            self.pyrebase_config = {
+                "apiKey": os.environ["PYREBASE_API_KEY"],
+                "authDomain": os.environ["PYREBASE_AUTH_DOMAIN"],
+                "databaseURL": os.environ["PYREBASE_DATABASE_URL"],
+                "storageBucket": os.environ["PYREBASE_STORAGE_BUCKET"],
+                "serviceAccount": "data/pyrebase-credentials.json"
+            }
+            with open(self.pyrebase_config["serviceAccount"], "w") as f:
+                json.dump({
+                    "type": "service_account",
+                    "project_id": "nexal-discord-bot",
+                    "private_key_id": os.environ["PYREBASE_PRIVATE_KEY_ID"],
+                    "private_key": os.environ["PYREBASE_PRIVATE_KEY"],
+                    "client_email": os.environ["PYREBASE_CLIENT_EMAIL"],
+                    "client_id": os.environ["PYREBASE_CLIENT_ID"],
+                    "auth_uri": os.environ["PYREBASE_AUTH_URI"],
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                    "client_x509_cert_url": os.environ["PYREBASE_CLIENT_X509_CERT_URL"]
+                }, f)
+        
+        self.db = pyrebase.initialize_app(self.pyrebase_config).database()
 
     async def not_nexal_admin_speech(self, channel, member):
         title = "Permission Error"
         description = "You need nexal admin permissions to run this command!"
         await channel.send(member.mention, embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
 
+    def get_role(self, guild, role_name):
+        role = None
+        for i in guild.roles:
+            if (i.name == role_name):
+                role = i
+        return role
+
+
 vars = Variables()
+pyc = PyrebaseCommands(vars.db)

@@ -1,4 +1,4 @@
-import discord, os, json
+import discord, os, json, pyrebase
 
 import commands
 
@@ -10,17 +10,17 @@ except:
 
 client = discord.Client()
 
+
+
 @client.event
 async def on_ready():
     print("Ready!")
 
 @client.event
 async def on_message(message):
-    with open("data/guilds.json") as f:
-        data = json.load(f)
     prefix = [".nexal "]
-    if (str(message.guild.id) in data):
-        for i in data[str(message.guild.id)]["prefix"]:
+    if commands.pyc.search(str(message.guild.id), []):
+        for i in commands.pyc.get_item([str(message.guild.id), "prefix"], []):
             prefix.append(i)
     PREFIX_TRUE = False
     for i in prefix:
