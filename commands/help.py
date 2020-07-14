@@ -1,5 +1,12 @@
 from command import *
 
+class Ping(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        await self.message.channel.send("Pong!")
+
 class Help(Command):
     def __init__(self, message, message_keys):
         super().__init__(message, message_keys)

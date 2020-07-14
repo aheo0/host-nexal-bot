@@ -1,6 +1,7 @@
+aiohttp
 discord
-requests
 pipenv
 pytesseract
 Pillow
 Pyrebase
+requests

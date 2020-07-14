@@ -72,25 +72,62 @@ class Type(Command):
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
 
+async def addReactions(message, mes_type, rea_type):
+    with open("data/emojis.json") as f:
+        data = json.load(f)
+    data = data[mes_type]
+    for i in data["essential"]:
+        #emoji = await message.guild.fetch_emoji(i)
+        await message.add_reaction(i)
+    for i in data[rea_type]:
+        #emoji = await message.guild.fetch_emoji(i)
+        await message.add_reaction(i)
+
 class Hc(Command):
     def __init__(self, message, message_keys):
         super().__init__(message, message_keys)
-        self.help_text = "Starts up an HC"
 
     async def run(self):
-        if (len(self.message_keys) == 0):
-            title = "HC has been started"
-            description = "React to <:ThicketPortal:578181776095051788> if you want to participate and react to <:ThicketKey:578181852154691594> if you are willing to pop. If you are planning to bring melees or a priest, react to the according icons."
-            sent = await self.message.guild.get_channel(rsa).send("@here", embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
-            await addReactions(sent, "afk")
+        if (len(self.message_keys) == 0 or self.message_keys[0] != "-h"):
+            if (len(self.message_keys) > 0 and self.message_keys[0][0] == "-"):
+                rea_type = self.message_keys[0][1:]
+                if rea_type not in ["c", "v", "st"]:
+                    title = "Invalid AFK Type"
+                    description = "fancy [c] Cultist Hideout, etc printing for the different afk types"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
+            else:
+                rea_type = pyc.get_item([str(self.message.guild.id), "type"])
+                if rea_type is None:
+                    title = "HC Command Error"
+                    description = "In order to use this shortcut, an afk type must be set in this server. Type `.nexal type -h` to learn how to"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
+            with open("data/emojis.json") as f:
+                data = json.load(f)
+            data = data[rea_type]
+            if (rea_type != "e"):
+                dung_name = {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket", "vc": "Veteran Cultist Hideout"}[rea_type]
+            RSA = pyc.get_item([str(self.message.guild.id), "rsa"])
+            if RSA is None:
+                title = "No RSA Defined"
+                description = "Type `.nexal rsa set -h` to learn how to set a raiding-status-announcments channel for afk checks"
+                await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                return
+
+            title = "HC for `" + dung_name + "` has been started"
+            description = "React to " + data["essential"][0] + " if you want to participate and react to " + data["essential"][1] + " if you are willing to pop. If you are planning to bring melees or a priest, react to the according icons."
+            sent = await self.message.guild.get_channel(RSA).send("here", embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+            await sent.edit(content="")
+            await addReactions(sent, rea_type, "afk")
 
             return
         if (self.message_keys[0] == "-h"):
             help_messages = {
-                "help": self.help_text
+                "help": "me"
             }
             title = "Info on command `hc`"
-            description = ""
+            description = "Starts up a hc. The different types of headcounts that can be started are listed below. After the command, type `-` and the afk type to start its respective headcount. ie. `.nexal hc -c` for a Cultist Hideout headcount"
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return

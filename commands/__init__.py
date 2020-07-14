@@ -19,6 +19,9 @@ class Main(SuperCommand):
             return
         
         # Help
+        if (self.message_keys[0] == "ping"):
+            await help.Ping(self.message, self.message_keys[1:]).run()
+            return
         if (self.message_keys[0] == "help"):
             await help.Help(self.message, self.message_keys[1:]).run()
             return
@@ -59,9 +62,9 @@ class Main(SuperCommand):
         if (self.message_keys[0] == "type"):
             await afk.Type(self.message, self.message_keys[1:]).run()
             return
-        #if (self.message_keys[0] == "hc"):
-        #    await afk.Hc(self.message, self.message_keys[1:]).run()
-        #    return
+        if (self.message_keys[0] == "hc"):
+            await afk.Hc(self.message, self.message_keys[1:]).run()
+            return
         #if (self.message_keys[0] == "afk"):
         #    await afk.Afk(self.message, self.message_keys[1:]).run()
         #    return

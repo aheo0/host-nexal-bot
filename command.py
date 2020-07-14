@@ -129,9 +129,6 @@ class Variables():
                     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
                     "client_x509_cert_url": os.environ["PYREBASE_CLIENT_X509_CERT_URL"]
                 }, f)
-            
-            with open(self.pyrebase_config["serviceAccount"], "r") as f:
-                print(f.read())
         
         self.db = pyrebase.initialize_app(self.pyrebase_config).database()
 

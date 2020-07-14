@@ -1,4 +1,4 @@
-import discord, os, json, pyrebase
+import discord, os, json, pyrebase, asyncio
 
 import commands
 
@@ -10,11 +10,12 @@ except:
 
 client = discord.Client()
 
-
+loop = asyncio.get_event_loop()
 
 @client.event
 async def on_ready():
     print("Ready!")
+
 
 @client.event
 async def on_message(message):

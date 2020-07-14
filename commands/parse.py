@@ -1,11 +1,13 @@
 from command import *
-import json, re, requests
+import json, re, aiohttp
 try:
     from PIL import Image
 except ImportError:
     import Image
 import pytesseract
 from io import BytesIO
+
+
 
 class Parse(Command):
     def __init__(self, message, message_keys):
@@ -33,7 +35,7 @@ class Parse(Command):
         self.vet = False
         self.dung_type = pyc.get_item([str(self.message.guild.id), "type"], "")
 
-    def checkStats(self, guild, igns, users=None, dung_type="c", vet=False):
+    async def checkStats(self, guild, igns, users=None, dung_type="c", vet=False):
         with open("data/reqs.json") as f:
             banned = json.load(f)
         type_char = dung_type
@@ -53,8 +55,12 @@ class Parse(Command):
                 try:
                     IGN = igns[i]
                     url = "https://www.realmeye.com/player/" + IGN
-                    request = requests.get(url=url, headers=self.headers)
-                    text = request.text
+                    #request = requests.get(url=url, headers=self.headers)
+                    #text = request.text
+                    async with aiohttp.ClientSession() as cs:
+                        async with cs.get(url, headers=self.headers) as r:
+                            text = await r.text()
+
                     data = text.split("<tbody>")
                     data = data[1].split("<tr>")
                     data = data[1].split("<td>")
@@ -315,7 +321,7 @@ class Parse(Command):
                 for i in server_crashers:
                     temp1.append(i[0])
                     temp2.append(i[1])
-                temp3, only_crashing, crashing_without_reqs, crashing_without_reqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1, dung_type=self.dung_type, vet=self.vet)
+                temp3, only_crashing, crashing_without_reqs, crashing_without_reqs_reasons = await self.checkStats(self.message.guild.id, temp2, temp1, dung_type=self.dung_type, vet=self.vet)
                 for i in temp3:
                     invisible.append(i)
 
@@ -324,11 +330,11 @@ class Parse(Command):
                 for i in non_crashers:
                     temp1.append(i[0])
                     temp2.append(i[1])
-                temp3, temp4, only_noreqs, only_noreqs_reasons = self.checkStats(self.message.guild.id, temp2, temp1, dung_type=self.dung_type, vet=self.vet)
+                temp3, temp4, only_noreqs, only_noreqs_reasons = await self.checkStats(self.message.guild.id, temp2, temp1, dung_type=self.dung_type, vet=self.vet)
                 for i in temp3:
                     invisible.append(i)
 
-                temp3, only_not_in_server, not_in_server_reqs, not_in_server_reqs = self.checkStats(self.message.guild.id, not_in_server, dung_type=self.dung_type, vet=self.vet)
+                temp3, only_not_in_server, not_in_server_reqs, not_in_server_reqs_reasons = await self.checkStats(self.message.guild.id, not_in_server, dung_type=self.dung_type, vet=self.vet)
                 for i in temp3:
                     invisible.append(i)
             else:
@@ -344,7 +350,7 @@ class Parse(Command):
                         IGNS.append(k)
                         raiders.append(i.id)
 
-                invisible, temp, only_noreqs, only_noreqs_reasons = self.checkStats(self.message.guild.id, IGNS, raiders, dung_type=self.dung_type, vet=self.vet)
+                invisible, temp, only_noreqs, only_noreqs_reasons = await self.checkStats(self.message.guild.id, IGNS, raiders, dung_type=self.dung_type, vet=self.vet)
                 only_crashing, crashing_without_reqs, only_not_in_server, not_in_server_reqs = [[], [], [], []]
 
             # Send Message
@@ -363,13 +369,13 @@ class Parse(Command):
                     for i in only_not_in_server[1:]:
                         temp[only_not_in_server[0]] += "[" + i + "] "
                 send_messages["Not-In-Server Crashers:"] = temp
+            fields = []
             if (len(not_in_server_reqs)!=0):
                 temp = {not_in_server_reqs[0]: ""}
                 if (len(not_in_server_reqs) > 1):
                     for i in not_in_server_reqs[1:]:
                         temp[not_in_server_reqs[0]] += "[" + i + "] "
                 send_messages["Not-In-Server Crashers without Reqs:"] = temp
-            fields = []
             for i in send_messages:
                 name = i
                 inline = False
@@ -386,7 +392,6 @@ class Parse(Command):
                         value += self.message.guild.get_member(i[0]).mention + " "
                     else:
                         value += self.message.guild.get_member(i[0]).mention + " (" + i[1] + ") "
-                fields.append({"name": "Crashers:", "value": value, "inline": False})
             if (len(only_noreqs) != 0):
                 value = ""
                 counter = -1
