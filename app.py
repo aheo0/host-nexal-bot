@@ -52,9 +52,17 @@ async def on_message(message):
         if PREFIX_TRUE:
             message_keys = message.content[PREFIX_LEN:].split(" ")
             await commands.Main(message, message_keys).run()
+    else:
+        if (message.content[:7] == ".nexal "):
+            message_keys = message.content[7:].split(" ")
+            await commands.Main(message, message_keys).dms()
 
 @commands.client.event
 async def on_reaction_add(reaction, user):
     await commands.Main().reaction(reaction, user)
+
+@commands.client.event
+async def on_raw_reaction_add(payload):
+    await commands.Main().raw_reaction(payload)
 
 commands.client.run(commands.DISCORD_TOKEN)
