@@ -16,81 +16,97 @@ class Main(SuperCommand):
         # Check Bot Command Channel
         if (pyc.search(str(self.message.guild.id), []) and \
             not pyc.search_val(self.message.channel.id, [str(self.message.guild.id), "bcs"])):
-            return
+            REGULAR = False
+        else:
+            REGULAR = True
         
-        # Help
-        if (self.message_keys[0] == "ping"):
-            await help.Ping(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "help"):
-            await help.Help(self.message, self.message_keys[1:]).run()
-            return
+        if REGULAR:
+            # Help
+            if (self.message_keys[0] == "ping"):
+                await help.Ping(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "help"):
+                await help.Help(self.message, self.message_keys[1:]).run()
+                return
 
-        # Config
-        if (self.message_keys[0] == "setup"):
-            await config.Setup(self.message, self.message_keys[1:]).run()
-            return
-        IS_BOT_SETUP = await config.Setup(self.message, self.message_keys[1:]).check()
-        if not IS_BOT_SETUP:
-            return
-        if (self.message_keys[0] == "delete-data"):
-            await config.Setup(self.message, self.message_keys[1:]).delete_data()
-            return
-        if (self.message_keys[0] == "prefix"):
-            await config.Prefix(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "admin"):
-            await config.Admin(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "bcs"):
-            await config.BCS(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "vcs"):
-            await config.VCS(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "rsa"):
-            await config.RSA(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "vet-rsa"):
-            await config.VRSA(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "event-rsa"):
-            await config.ERSA(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "lng"):
-            await config.LNG(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "vet-lng"):
-            await config.VLNG(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "event-lng"):
-            await config.ELNG(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "role"):
-            await config.Role(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "type"):
-            await config.Type(self.message, self.message_keys[1:]).run()
-            return
-        
-        # AFK
-        if (self.message_keys[0] == "hc"):
-            await afk.Hc(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "afk"):
-            await afk.Afk(self.message, self.message_keys[1:]).run()
-            return
-        if (self.message_keys[0] == "endafk"):
-            await afk.Endafk(self.message, self.message_keys[1:]).run()
-            return
-        #if (self.message_keys[0] == "endrun"):
-        #    await afk.Endrun(self.message, self.message_keys[1:]).run()
-        #    return
+            # Config
+            if (self.message_keys[0] == "setup"):
+                await config.Setup(self.message, self.message_keys[1:]).run()
+                return
+            IS_BOT_SETUP = await config.Setup(self.message, self.message_keys[1:]).check()
+            if not IS_BOT_SETUP:
+                return
+            if (self.message_keys[0] == "delete-data"):
+                await config.Setup(self.message, self.message_keys[1:]).delete_data()
+                return
+            if (self.message_keys[0] == "prefix"):
+                await config.Prefix(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "admin"):
+                await config.Admin(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "bcs"):
+                await config.BCS(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "vcs"):
+                await config.VCS(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "rsa"):
+                await config.RSA(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "vet-rsa"):
+                await config.VRSA(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "event-rsa"):
+                await config.ERSA(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "lng"):
+                await config.LNG(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "vet-lng"):
+                await config.VLNG(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "event-lng"):
+                await config.ELNG(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "role"):
+                await config.Role(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "type"):
+                await config.Type(self.message, self.message_keys[1:]).run()
+                return
+            
+            # AFK
+            if (self.message_keys[0] == "hc"):
+                await afk.Hc(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "afk"):
+                await afk.Afk(self.message, self.message_keys[1:]).run()
+                return
+            if (self.message_keys[0] == "endafk"):
+                await afk.Endafk(self.message, self.message_keys[1:]).run()
+                return
+            #if (self.message_keys[0] == "endrun"):
+            #    await afk.Endrun(self.message, self.message_keys[1:]).run()
+            #    return
 
-        # Parse
-        if (self.message_keys[0] == "parse"):
-            await parse.Parse(self.message, self.message_keys[1:]).run()
-            return
+            # Parse
+            if (self.message_keys[0] == "parse"):
+                await parse.Parse(self.message, self.message_keys[1:]).run()
+                return
+
+        #####
+        # Special
+        #####
+
+        # - # Cults Only (715217084900180048)
+        if (self.message.guild.id == 715217084900180048):
+            # Vet Verify
+            if (self.message_keys[0] == "verify" and self.message.channel.id == 732810331528626226):
+                cults_only.VetVerify(self.message, self.message_keys[1:]).run()
+                return
 
     async def reaction(self, reaction, user):
-        await afk.KeyReact(reaction, user).run()
+        react = await afk.KeyReact(reaction, user).run()
+        if react is None:
+            react = await cults_only.KeyReact(reaction, user).run()

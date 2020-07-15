@@ -245,6 +245,8 @@ class Parse(Command):
             # People in Dungeon
             if (len(self.message_keys) > 1):
                 raiders = self.message_keys[1:]
+                raiders = raiders.replace("\n", " ").replace(",", " ").replace(".", " ").replace("  ", " ")
+                raiders = re.sub(" +", " ", raiders).split(" ")
             else:
                 raiders = []
             if (self.message.attachments is not None and len(self.message.attachments)>0):

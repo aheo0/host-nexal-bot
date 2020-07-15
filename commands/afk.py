@@ -277,49 +277,6 @@ class Endafk(Command):
             await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description, "fields": fields}))
             return
 
-class Endrun(Command):
-    def __init__(self, message, message_keys):
-        super().__init__(message, message_keys)
-        self.help_text = "Ends runs"
-
-    async def run(self):
-        if (self.message_keys[0] != "-h"):
-            with open("info.json") as f:
-                data = json.load(f)
-            afks = data["afk"]
-            if (self.message_keys[0] not in afks):
-                await self.message.channel.send(self.message.author.mention + " Run in Raiding " + self.message_keys[0] + " has not started yet.")
-                return
-            if (afks[self.message_keys[0]]["status"] == "afk"):
-                await self.message.channel.send(self.message.author.mention + " End the AFK check first in Raiding " + self.message_keys[0] + "!")
-                return
-            sent = await self.message.guild.get_channel(rsa).fetch_message(afks[self.message_keys[0]]["id"])
-            title = "Run in Raiding " + self.message_keys[0] + " has ended"
-            description = ""
-            await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
-            if (self.message_keys[1] == "s"):
-                if (str(afks[self.message_keys[0]]["raid-leader"]) in data["runs"]):
-                    data["runs"][str(afks[self.message_keys[0]]["raid-leader"])] += 1
-                else:
-                    data["runs"][str(afks[self.message_keys[0]]["raid-leader"])] = 1
-            afks.pop(self.message_keys[0])
-            await self.message.channel.send("Run has ended!")
-
-            data["afk"] = afks
-            print(data)
-            with open("info.json", "w") as f:
-                json.dump(data, f)
-            return
-        if (self.message_keys[0] == "-h"):
-            help_messages = {
-                "help": self.help_text
-            }
-            title = "Info on command `endrun`"
-            description = "Ends run"
-            fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
-            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
-            return
-
 class KeyReact:
     def __init__(self, reaction, user):
         self.reaction = reaction
@@ -363,7 +320,7 @@ class KeyReact:
                 "afk-number": is_afk,
                 "key": str(reaction.emoji)
             })
-            return
+            return True
         # Confirm Key
         if (reaction.message.author.id != user.id and str(reaction.emoji) == "✅"):
             if not pyc.search(str(reaction.message.id), ["key-react-dms"]):
@@ -401,7 +358,7 @@ class KeyReact:
             key_dms.remove(reaction.message.id)
             pyc.child(current_afk_list + ["key-reacts"]).set(key_dms)
             vars.db.child("key-react-dms").child(str(reaction.message.id)).remove()
-            return
+            return True
         # Move Raiders Back
         if (reaction.message.author.id != user.id and str(reaction.emoji) in self.portals):
             guild = reaction.message.guild
@@ -418,6 +375,6 @@ class KeyReact:
 
             VC_id = pyc.get_item([guild_id, "vcs"])[int(foundAFK[1:])-1]
             await user.edit(voice_channel=guild.get_channel(VC_id))
-            return
+            return True
         return
 
