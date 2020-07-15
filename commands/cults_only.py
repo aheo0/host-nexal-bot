@@ -9,7 +9,7 @@ class VetVerify:
         CULT_COUNT = 50
         
         if (len(self.message_keys) == 0):
-            await 
+            pass
 
 
 class KeyReact:
