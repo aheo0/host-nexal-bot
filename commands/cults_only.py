@@ -89,17 +89,15 @@ class KeyReact:
         if (str(payload.emoji) == "❌"):
             isVet = False
             roles = []
-            member = user.guild
-            for i in member.roles:
+            for i in user.roles:
                 if (i.name == "Veteran Raider"):
                     isVet = i
                     print(i.id)
-                    break
                 else:
                     roles.append(i)
             if not isVet:
                 return
-            await member.edit(roles=roles)
+            await user.edit(roles=roles)
 
             if (user.dm_channel is None):
                 await user.create_dm()
