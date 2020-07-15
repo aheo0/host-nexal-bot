@@ -1,5 +1,5 @@
 from command import *
-import json, re, aiohttp
+import json, re, aiohttp, requests
 try:
     from PIL import Image
 except ImportError:
