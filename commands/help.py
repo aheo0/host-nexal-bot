@@ -27,15 +27,20 @@ class Help(Command):
                     "bcs": "Modifies or lists the bot command channels list",
                     "vcs": "Modifies or lists the raiding voice channels list",
                     "rsa": "Modifies or shows the rsa channel. ie. .nexal_rsa_set_1234567890 to change the rsa channel to the one with ID 123456789",
+                    "vet-rsa": "Same as .nexal_rsa but for veteran runs",
+                    "event-rsa": "Same as .nexal_rsa but for event runs"
+                },
+                "[*] CONFIG 2": {
                     "lng": "Modifies or shows the AFK voice channel. ie. .nexal_lng_set_1234567890 to change the rsa channel to the one with ID 123456789. Set ID to 0 to just disconnect raiders. For servers without an AFK channel, this can just be Lounge if it exists",
-                    "role": "Modifies or shows the name of the verified role. ie. .nexal_role_set_Verified_Raider if the name of the role with general permissions is \"Verified Raider\""
+                    "vet-lng": "Same as .nexal_lng but for veteran runs",
+                    "event-lng": "Same as .nexal_lng but for event runs",
+                    "role": "Modifies or shows the name of the verified role. ie. .nexal_role_set_Verified_Raider if the name of the role with general permissions is \"Verified Raider\"",
+                    "type": "[*] Sets the default type of afk checks. A cultist hideout headcount can then be started with .nexal_hc rather than .nexal_hc_c ie. .nexal_type_set_c Type .nexal_type_-h to see all possible afk check types",
                 },
                 "AFK-CHECK": {
-                    "type": "[*] Sets the default type of afk checks. A cultist hideout headcount can then be started with .nexal_hc rather than .nexal_hc_c ie. .nexal_type_set_c Type .nexal_type_-h to see all possible afk check types",
                     "hc": "Starts up an headcount. ie. .nexal_hc or .nexal_c_hc for a cultist hideout headcount. Type .nexal_hc_-h to see the different HC/AFKs you can start",
                     "afk": "Starts up an AFK check. ie. .nexal_afk_1_AustraliaSouthEast_Down",
                     "endafk": "Ends AFK. ie. .nexal_endafk_1",
-                    "endrun": "Ends run. ie. .nexal_endrun_1_s or .nexal_endrun_1_f",
                 },
                 "PARSE": {
                     "parse": "Parses raiders for requirements. ie. .nexal_parse_1 and add a screenshot of the /who command with a black background. You can also list the raiders after the command separated by either a comma, period, space, or a newline ie. .nexal_parse_1_MeApollo_nexal",

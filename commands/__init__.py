@@ -51,26 +51,38 @@ class Main(SuperCommand):
         if (self.message_keys[0] == "rsa"):
             await config.RSA(self.message, self.message_keys[1:]).run()
             return
+        if (self.message_keys[0] == "vet-rsa"):
+            await config.VRSA(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "event-rsa"):
+            await config.ERSA(self.message, self.message_keys[1:]).run()
+            return
         if (self.message_keys[0] == "lng"):
             await config.LNG(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "vet-lng"):
+            await config.VLNG(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "event-lng"):
+            await config.ELNG(self.message, self.message_keys[1:]).run()
             return
         if (self.message_keys[0] == "role"):
             await config.Role(self.message, self.message_keys[1:]).run()
             return
+        if (self.message_keys[0] == "type"):
+            await config.Type(self.message, self.message_keys[1:]).run()
+            return
         
         # AFK
-        if (self.message_keys[0] == "type"):
-            await afk.Type(self.message, self.message_keys[1:]).run()
-            return
         if (self.message_keys[0] == "hc"):
             await afk.Hc(self.message, self.message_keys[1:]).run()
             return
-        #if (self.message_keys[0] == "afk"):
-        #    await afk.Afk(self.message, self.message_keys[1:]).run()
-        #    return
-        #if (self.message_keys[0] == "endafk"):
-        #    await afk.Endafk(self.message, self.message_keys[1:]).run()
-        #    return
+        if (self.message_keys[0] == "afk"):
+            await afk.Afk(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "endafk"):
+            await afk.Endafk(self.message, self.message_keys[1:]).run()
+            return
         #if (self.message_keys[0] == "endrun"):
         #    await afk.Endrun(self.message, self.message_keys[1:]).run()
         #    return
@@ -80,5 +92,5 @@ class Main(SuperCommand):
             await parse.Parse(self.message, self.message_keys[1:]).run()
             return
 
-    #async def reaction(self, reaction, user):
-    #    await afk.KeyReact(reaction, user).run()
+    async def reaction(self, reaction, user):
+        await afk.KeyReact(reaction, user).run()

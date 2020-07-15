@@ -615,6 +615,172 @@ class RSA(Command):
                 fields.append({"name": name, "value": value, "inline": inline})
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
+class VRSA(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            RSA = pyc.get_item([str(self.message.guild.id), "vet-rsa"], 0)
+            if (self.message_keys[0] == "set"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        try:
+                            temp = int(temp)
+                        except:
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (self.message.guild.get_channel(temp) is None):
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (str(self.message.guild.get_channel(temp).type) != "text"):
+                            title = "Channel ID Error"
+                            description = "This channel is not a text channel"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        pyc.child([str(self.message.guild.id), "vet-rsa"]).set(temp)
+                        
+                        title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the veteran raiding status announcements channel"
+                        description = self.message.guild.get_channel(temp).mention
+                        await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+                        return
+                    else:
+                        title = "Info on command `vet-rsa set`"
+                        description = "Sets the veteran raiding status announcements text channel. Enter the ID of the text channel after the command. ie. `.nexal vet-rsa set 1234567890`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "list"):
+                if (len(self.message_keys) == 1):
+                    if (RSA == 0):
+                        title = "No Veteran Raiding Status Announcement Channels are currently set"
+                        description = "Type `.nexal vet-rsa set 1234567890`, replacing 1234567890 with the text channel id to set one"
+                        await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
+                        return
+                    title = "Current Veteran Raiding Status Announcement Channel"
+                    description = self.message.guild.get_channel(RSA).mention
+                    await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
+                    return
+                if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
+                    title = "Info on command `rsa list`"
+                    description = "Displays the current veteran raiding status announcements channel. ie. `.nexal vet-rsa list`"
+                    await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                    return
+
+        if (self.message_keys[0] == "-h"):
+            help_messages = {
+                "COMMANDS": {
+                    "set": "Sets the veteran raiding status announcements text channel. Enter the ID of the text channel after the command. ie. .nexal_vet-rsa_set_1234567890",
+                    "list": "Displays the current veteran raiding status announcements channel. ie. .nexal_vet-rsa_list"
+                }
+            }
+            title = "Info on command `vet-rsa`"
+            description = "Sets or displays the veteran raiding status announcements channel"
+            fields = []
+            for i in help_messages:
+                name = i
+                inline = False
+                value = "```css\n"
+                for j in help_messages[i]:
+                    value += "[" + j + "] " + help_messages[i][j] + "\n"
+                value += "```"
+                fields.append({"name": name, "value": value, "inline": inline})
+            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            return
+class ERSA(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            RSA = pyc.get_item([str(self.message.guild.id), "event-rsa"], 0)
+            if (self.message_keys[0] == "set"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        try:
+                            temp = int(temp)
+                        except:
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (self.message.guild.get_channel(temp) is None):
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (str(self.message.guild.get_channel(temp).type) != "text"):
+                            title = "Channel ID Error"
+                            description = "This channel is not a text channel"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        pyc.child([str(self.message.guild.id), "event-rsa"]).set(temp)
+                        
+                        title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the event raiding status announcements channel"
+                        description = self.message.guild.get_channel(temp).mention
+                        await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+                        return
+                    else:
+                        title = "Info on command `event-rsa set`"
+                        description = "Sets the event raiding status announcements text channel. Enter the ID of the text channel after the command. ie. `.nexal event-rsa set 1234567890`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "list"):
+                if (len(self.message_keys) == 1):
+                    if (RSA == 0):
+                        title = "No Event Raiding Status Announcement Channels are currently set"
+                        description = "Type `.nexal event-rsa set 1234567890`, replacing 1234567890 with the text channel id to set one"
+                        await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
+                        return
+                    title = "Current Event Raiding Status Announcement Channel"
+                    description = self.message.guild.get_channel(RSA).mention
+                    await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
+                    return
+                if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
+                    title = "Info on command `rsa list`"
+                    description = "Displays the current event raiding status announcements channel. ie. `.nexal rsa list`"
+                    await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                    return
+
+        if (self.message_keys[0] == "-h"):
+            help_messages = {
+                "COMMANDS": {
+                    "set": "Sets the event raiding status announcements text channel. Enter the ID of the text channel after the command. ie. .nexal_event-rsa_set_1234567890",
+                    "list": "Displays the current event raiding status announcements channel. ie. .nexal_event-rsa_list"
+                }
+            }
+            title = "Info on command `event-rsa`"
+            description = "Sets or displays the event raiding status announcements channel"
+            fields = []
+            for i in help_messages:
+                name = i
+                inline = False
+                value = "```css\n"
+                for j in help_messages[i]:
+                    value += "[" + j + "] " + help_messages[i][j] + "\n"
+                value += "```"
+                fields.append({"name": name, "value": value, "inline": inline})
+            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            return
 
 class LNG(Command):
     def __init__(self, message, message_keys):
@@ -688,6 +854,172 @@ class LNG(Command):
             }
             title = "Info on command `lng`"
             description = "Sets or displays the afk voice channel"
+            fields = []
+            for i in help_messages:
+                name = i
+                inline = False
+                value = "```css\n"
+                for j in help_messages[i]:
+                    value += "[" + j + "] " + help_messages[i][j] + "\n"
+                value += "```"
+                fields.append({"name": name, "value": value, "inline": inline})
+            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            return
+class VLNG(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            LNG = pyc.get_item([str(self.message.guild.id), "vet-lounge"], [])
+            if (self.message_keys[0] == "set"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        try:
+                            temp = int(temp)
+                        except:
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (self.message.guild.get_channel(temp) is None):
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (str(self.message.guild.get_channel(temp).type) != "voice"):
+                            title = "Channel ID Error"
+                            description = "This channel is not a voice channel"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        pyc.child([str(self.message.guild.id), "vet-lounge"]).set(temp)
+                        
+                        title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the veteran afk channel"
+                        description = self.message.guild.get_channel(temp).mention
+                        await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+                        return
+                    else:
+                        title = "Info on command `vet-lng set`"
+                        description = "Sets the afk voice channel. Enter the ID of the voice channel after the command. ie. `.nexal vet-lng set 1234567890`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "list"):
+                if (len(self.message_keys) == 1):
+                    if (LNG == 0):
+                        title = "No Veteran AFK Channels are currently set"
+                        description = "Type `.nexal vet-lng set 1234567890`, replacing 1234567890 with the text channel id to set one"
+                        await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
+                        return
+                    title = "Current AFK Channel"
+                    description = self.message.guild.get_channel(LNG).mention
+                    await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
+                    return
+                if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
+                    title = "Info on command `vet-lng list`"
+                    description = "Displays the current afk channel. ie. `.nexal vet-lng list`"
+                    await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                    return
+
+        if (self.message_keys[0] == "-h"):
+            help_messages = {
+                "COMMANDS": {
+                    "set": "Sets the veteran afk voice channel. Enter the ID of the voice channel after the command. ie. .nexal_vet-lng_set_1234567890",
+                    "list": "Displays the current veteran afk channel. ie. .nexal_vet-lng_list"
+                }
+            }
+            title = "Info on command `vet-lng`"
+            description = "Sets or displays the veteran afk voice channel"
+            fields = []
+            for i in help_messages:
+                name = i
+                inline = False
+                value = "```css\n"
+                for j in help_messages[i]:
+                    value += "[" + j + "] " + help_messages[i][j] + "\n"
+                value += "```"
+                fields.append({"name": name, "value": value, "inline": inline})
+            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            return
+class ELNG(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            LNG = pyc.get_item([str(self.message.guild.id), "event-lounge"], [])
+            if (self.message_keys[0] == "set"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        try:
+                            temp = int(temp)
+                        except:
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (self.message.guild.get_channel(temp) is None):
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if (str(self.message.guild.get_channel(temp).type) != "voice"):
+                            title = "Channel ID Error"
+                            description = "This channel is not a voice channel"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        pyc.child([str(self.message.guild.id), "lounge"]).set(temp)
+                        
+                        title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the event afk channel"
+                        description = self.message.guild.get_channel(temp).mention
+                        await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+                        return
+                    else:
+                        title = "Info on command `event-lng set`"
+                        description = "Sets the afk voice channel. Enter the ID of the voice channel after the command. ie. `.nexal event-lng set 1234567890`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "list"):
+                if (len(self.message_keys) == 1):
+                    if (LNG == 0):
+                        title = "No Event AFK Channels are currently set"
+                        description = "Type `.nexal event-lng set 1234567890`, replacing 1234567890 with the text channel id to set one"
+                        await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
+                        return
+                    title = "Current Event AFK Channel"
+                    description = self.message.guild.get_channel(LNG).mention
+                    await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
+                    return
+                if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
+                    title = "Info on command `event-lng list`"
+                    description = "Displays the current event afk channel. ie. `.nexal event-lng list`"
+                    await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                    return
+
+        if (self.message_keys[0] == "-h"):
+            help_messages = {
+                "COMMANDS": {
+                    "set": "Sets the event afk voice channel. Enter the ID of the voice channel after the command. ie. .nexal_event-lng_set_1234567890",
+                    "list": "Displays the current event afk channel. ie. .nexal_event-lng_list"
+                }
+            }
+            title = "Info on command `event-lng`"
+            description = "Sets or displays the event afk voice channel"
             fields = []
             for i in help_messages:
                 name = i
@@ -775,3 +1107,75 @@ class Role(Command):
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
 
+class Type(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            TYPE = pyc.get_item([str(self.message.guild.id), "type"], "")
+            if (self.message_keys[0] == "set"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        if (temp not in ["c", "v", "st"]):
+                            title = "Type Error"
+                            description = "No type exists with those acronyms. Type `.nexal type -h` to learn how to set an AFK type in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        pyc.child([str(self.message.guild.id), "type"]).set(temp)
+                        
+                        title = "The default AFK type has been set to `" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket"}[temp] + "`"
+                        await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title}))
+                        return
+                    else:
+                        title = "Info on command `type set`"
+                        description = "Sets the default type of AFKs. After the command type in the following characters for the respective types: (c) for Cult, (v) for Void, (st) for Secluded Thicket. ie. `.nexal type set c`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "list"):
+                if (len(self.message_keys) == 1):
+                    if (TYPE == ""):
+                        title = "No types are currently set"
+                        description = "Type `.nexal type -h` to learn how to set an AFK type in this server"
+                        await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
+                        return
+                    title = "Current AFK Type"
+                    description = "`" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket"}[TYPE] + "`"
+                    await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
+                    return
+                if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
+                    title = "Info on command `type list`"
+                    description = "Displays the default type of AFKs. ie. `.nexal type list`"
+                    await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                    return
+
+        if (self.message_keys[0] == "-h"):
+            help_messages = {
+                "COMMANDS": {
+                    "set": "Sets the default type of AFKs. After the command type in the following characters for the respective types: (c) for Cult, (v) for Void, (st) for Secluded Thicket. ie. .nexal_type_set_c",
+                    "list": "Displays the default type of AFKs. ie. .nexal_type_list"
+                }
+            }
+            title = "Info on command `type`"
+            description = "Sets or displays the defautl afk check type"
+            fields = []
+            for i in help_messages:
+                name = i
+                inline = False
+                value = "```css\n"
+                for j in help_messages[i]:
+                    value += "[" + j + "] " + help_messages[i][j] + "\n"
+                value += "```"
+                fields.append({"name": name, "value": value, "inline": inline})
+            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            return
+
+            

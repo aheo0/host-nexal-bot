@@ -147,3 +147,12 @@ class Variables():
 
 vars = Variables()
 pyc = PyrebaseCommands(vars.db)
+
+try:
+    with open("bot_token.txt") as f:
+        DISCORD_TOKEN = f.read()
+except:
+    DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
+
+client = discord.Client()
+
