@@ -24,6 +24,8 @@ def create_embed(type_="DEFAULT", fields={}):
         embed_dict["color"] = 6567912
     if (type_ == "REPLY"):
         embed_dict["color"] = 8051163
+    if (type_ == "DM"):
+        embed_dict["color"] = 6116280
     
     for i in fields:
         embed_dict[i] = fields[i]

@@ -7,7 +7,34 @@ loop = asyncio.get_event_loop()
 @commands.client.event
 async def on_ready():
     print("Ready!")
+    if False:
+        title = "Verify for Veteran Cult Runs"
+        description = "The long awaited veteran cultist hideout runs have finally arrived in the realm of Cults Only. Steps for verification are listed below"
+        fields = [{
+            "name": "Requirements",
+            "value": "<:cultist:715219618876227674> **50 Cultist Hideout completitions**\n<:brain:715219618842542182> Visible Realmeye Graveyard",
+            "inline": False
+        }]
+        fields.append({
+            "name": "Visible Realmeye",
+            "value": "Log into your `realmeye account` and under `Settings` scroll down to the `Who can see my graveyard?` and set it to `Everyone`",
+            "inline": False
+        })
+        fields.append({
+            "name": "To Finish...",
+            "value": "React to ✅ to finish the verification process via a DM from the bot",
+            "inline": False
+        })
+        fields.append({
+            "name": "If You're Leaving...",
+            "value": "React to ❌ to discontinue your veteran raiding experience",
+            "inline": False
+        })
 
+        sent = await commands.client.get_channel(732810331528626226).send("@here", embed=commands.create_embed(type_="DM", fields={"title": title, "description": description, "fields": fields}))
+        await sent.add_reaction("✅")
+        await sent.add_reaction("❌")
+        print(sent.id)
 
 @commands.client.event
 async def on_message(message):
