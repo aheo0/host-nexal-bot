@@ -72,7 +72,7 @@ class KeyReact:
         self.payload = payload
     async def run(self):
         payload, user = self.payload, self.payload.member
-        if (payload.message_id != 732946226571640852):
+        if (payload.message_id != 733141028197892179):
             return
         if (str(payload.emoji) == "✅"):
             vet_db_list = ["cults-only", "vet-verify", str(user.id)]
