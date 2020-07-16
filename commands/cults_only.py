@@ -57,7 +57,7 @@ class VetVerify(Command):
                 break
             roles.append(i)
         if not already:
-            roles.append(guild.get_role(715217084900180054))
+            roles.append(guild.get_role(733173709308821516))
             await member.edit(roles=roles)
 
         title = "Veteran Verification for `Cults Only` Complete"
