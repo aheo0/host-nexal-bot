@@ -120,5 +120,5 @@ class Main(SuperCommand):
             #    react = False
         
     async def raw_reaction(self, payload):
-        if (payload.message_id == 732824777223307374):
+        if (payload.message_id == 733141028197892179):
             react = await cults_only.KeyReact(payload).run()

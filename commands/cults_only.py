@@ -72,6 +72,7 @@ class KeyReact:
         self.payload = payload
     async def run(self):
         payload, user = self.payload, self.payload.member
+        print("test")
         if (payload.message_id != 733141028197892179):
             return
         if (str(payload.emoji) == "✅"):
