@@ -14,7 +14,7 @@ class Main(SuperCommand):
 
         # Check Bot Command Channel
         if (pyc.search(str(self.message.guild.id), []) and \
-            not pyc.search_val(self.message.channel.id, [str(self.message.guild.id), "bcs"])):
+            not pyc.search_val(str(self.message.channel.id), [str(self.message.guild.id), "bcs"])):
             return
 
         # Help
@@ -91,6 +91,11 @@ class Main(SuperCommand):
             await parse.Parse(self.message, self.message_keys[1:]).run()
             return
 
+        # TRL Feedback
+        if (self.message_keys[0] == "trl-feedback"):
+            await trl_feedback.TrlFeedback().run(self.message, self.message_keys[1:])
+            return
+
     async def dms(self):
         #####
         # Special
@@ -103,7 +108,16 @@ class Main(SuperCommand):
                 return
 
     async def reaction(self, reaction, user):
-        react = await afk.KeyReact(reaction, user).run()
+        try:
+            react = await afk.KeyReact(reaction, user).run()
+        except:
+            react = False
+        if not react:
+            react = await trl_feedback.TrlFeedback().KeyReact(reaction, user)
+            #try:
+            #    react = await trl_feedback.TrlFeedback.KeyReact(reaction, user)
+            #except:
+            #    react = False
         
     async def raw_reaction(self, payload):
         if (payload.message_id == 732824777223307374):

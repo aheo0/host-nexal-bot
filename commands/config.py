@@ -14,8 +14,8 @@ class Setup(Command):
                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
             else:
                 add_data = {
-                    "admins": [self.message.author.id],
-                    "bcs": [self.message.channel.id]
+                    "admins": [str(self.message.author.id)],
+                    "bcs": [str(self.message.channel.id)]
                 }
                 vars.db.child(str(self.message.guild.id)).set(add_data)
                 
@@ -68,7 +68,7 @@ class Prefix(Command):
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = " ".join(self.message_keys[1:])
@@ -94,7 +94,7 @@ class Prefix(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = " ".join(self.message_keys[1:])
@@ -165,7 +165,7 @@ class Admin(Command):
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -176,13 +176,13 @@ class Admin(Command):
                             description = "No user with this ID exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if temp not in ADMINS:
+                        if str(temp) not in ADMINS:
                             if (self.message.guild.get_member(temp) is None):
                                 title = "User ID Error"
                                 description = "No user with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            pyc.child([str(self.message.guild.id), "admins"]).set(ADMINS + [temp])
+                            pyc.child([str(self.message.guild.id), "admins"]).set(ADMINS + [str(temp)])
                             
                             title = "New nexal admin " + self.message.guild.get_member(temp).mention + " has been successfully added"
                             description = self.message.guild.get_member(temp).mention
@@ -205,7 +205,7 @@ class Admin(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -216,13 +216,13 @@ class Admin(Command):
                             description = "No user with this ID exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if temp in ADMINS:
+                        if str(temp) in ADMINS:
                             if (self.message.guild.get_member(temp) is None):
                                 title = "User ID Error"
                                 description = "No user with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            ADMINS.remove(temp)
+                            ADMINS.remove(str(temp))
                             pyc.child([str(self.message.guild.id), "admins"]).set(ADMINS)
                             
                             title = "Nexal admin " + self.message.guild.get_member(temp).mention + " has been successfully deleted"
@@ -248,7 +248,7 @@ class Admin(Command):
                     title = "Available Admins"
                     description = ""
                     for i in ADMINS:
-                        description += self.message.guild.get_member(i).mention + " "
+                        description += self.message.guild.get_member(int(i)).mention + " "
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -289,7 +289,7 @@ class BCS(Command):
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -300,13 +300,13 @@ class BCS(Command):
                             description = "No channel with this ID exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if temp not in BCS:
+                        if str(temp) not in BCS:
                             if (self.message.guild.get_channel(temp) is None):
                                 title = "Channel ID Error"
                                 description = "No channel with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            pyc.child([str(self.message.guild.id), "bcs"]).set(BCS + [temp])
+                            pyc.child([str(self.message.guild.id), "bcs"]).set(BCS + [str(temp)])
                             
                             title = "New bot command channel " + self.message.guild.get_channel(temp).mention + " has been successfully added"
                             description = self.message.guild.get_channel(temp).mention
@@ -329,7 +329,7 @@ class BCS(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -340,13 +340,13 @@ class BCS(Command):
                             description = "No channel with this ID exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if temp in BCS:
+                        if str(temp) in BCS:
                             if (self.message.guild.get_channel(temp) is None):
                                 title = "Channel ID Error"
                                 description = "No channel with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            BCS.remove(temp)
+                            BCS.remove(str(temp))
                             pyc.child([str(self.message.guild.id), "bcs"]).set(BCS)
                             
                             title = "Bot command channel " + self.message.guild.get_channel(temp).mention + " has been successfully deleted"
@@ -372,7 +372,7 @@ class BCS(Command):
                     title = "Available Bot Command Channels"
                     description = ""
                     for i in BCS:
-                        description += self.message.guild.get_channel(i).mention + " "
+                        description += self.message.guild.get_channel(int(i)).mention + " "
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -413,7 +413,7 @@ class VCS(Command):
             if (self.message_keys[0] == "add"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -424,7 +424,7 @@ class VCS(Command):
                             description = "No channel with this ID exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if temp not in VCS:
+                        if str(temp) not in VCS:
                             if (self.message.guild.get_channel(temp) is None):
                                 title = "Channel ID Error"
                                 description = "No channel with this ID exists in this server"
@@ -435,7 +435,7 @@ class VCS(Command):
                                 description = "This channel is not a voice channel"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            pyc.child([str(self.message.guild.id), "vcs"]).set(VCS + [temp])
+                            pyc.child([str(self.message.guild.id), "vcs"]).set(VCS + [str(temp)])
                             
                             title = "New raiding voice channel " + self.message.guild.get_channel(temp).mention + " has been successfully added"
                             description = self.message.guild.get_channel(temp).mention
@@ -458,7 +458,7 @@ class VCS(Command):
             if (self.message_keys[0] == "del"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -469,13 +469,13 @@ class VCS(Command):
                             description = "No channel with this ID exists in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        if temp in VCS:
+                        if str(temp) in VCS:
                             if (self.message.guild.get_channel(temp) is None):
                                 title = "Channel ID Error"
                                 description = "No channel with this ID exists in this server"
                                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                                 return
-                            VCS.remove(temp)
+                            VCS.remove(str(temp))
                             pyc.child([str(self.message.guild.id), "vcs"]).set(VCS)
                             
                             title = "Raiding voice channel " + self.message.guild.get_channel(temp).mention + " has been successfully deleted"
@@ -501,7 +501,7 @@ class VCS(Command):
                     title = "Available Raiding Voice Channels"
                     description = ""
                     for i in VCS:
-                        description += self.message.guild.get_channel(i).mention + " "
+                        description += self.message.guild.get_channel(int(i)).mention + " "
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -542,7 +542,7 @@ class RSA(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -563,7 +563,7 @@ class RSA(Command):
                             description = "This channel is not a text channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        pyc.child([str(self.message.guild.id), "rsa"]).set(temp)
+                        pyc.child([str(self.message.guild.id), "rsa"]).set(str(temp))
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the raiding status announcements channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -580,13 +580,13 @@ class RSA(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (RSA == 0):
+                    if (int(RSA) == 0):
                         title = "No Raiding Status Announcement Channels are currently set"
                         description = "Type `.nexal rsa set 1234567890`, replacing 1234567890 with the text channel id to set one"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
                     title = "Current Raiding Status Announcement Channel"
-                    description = self.message.guild.get_channel(RSA).mention
+                    description = self.message.guild.get_channel(int(RSA)).mention
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -625,7 +625,7 @@ class VRSA(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -646,7 +646,7 @@ class VRSA(Command):
                             description = "This channel is not a text channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        pyc.child([str(self.message.guild.id), "vet-rsa"]).set(temp)
+                        pyc.child([str(self.message.guild.id), "vet-rsa"]).set(str(temp))
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the veteran raiding status announcements channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -663,13 +663,13 @@ class VRSA(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (RSA == 0):
+                    if (int(RSA) == 0):
                         title = "No Veteran Raiding Status Announcement Channels are currently set"
                         description = "Type `.nexal vet-rsa set 1234567890`, replacing 1234567890 with the text channel id to set one"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
                     title = "Current Veteran Raiding Status Announcement Channel"
-                    description = self.message.guild.get_channel(RSA).mention
+                    description = self.message.guild.get_channel(int(RSA)).mention
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -708,7 +708,7 @@ class ERSA(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -729,7 +729,7 @@ class ERSA(Command):
                             description = "This channel is not a text channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        pyc.child([str(self.message.guild.id), "event-rsa"]).set(temp)
+                        pyc.child([str(self.message.guild.id), "event-rsa"]).set(str(temp))
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the event raiding status announcements channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -746,13 +746,13 @@ class ERSA(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (RSA == 0):
+                    if (int(RSA) == 0):
                         title = "No Event Raiding Status Announcement Channels are currently set"
                         description = "Type `.nexal event-rsa set 1234567890`, replacing 1234567890 with the text channel id to set one"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
                     title = "Current Event Raiding Status Announcement Channel"
-                    description = self.message.guild.get_channel(RSA).mention
+                    description = self.message.guild.get_channel(int(RSA)).mention
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -792,7 +792,7 @@ class LNG(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -813,7 +813,7 @@ class LNG(Command):
                             description = "This channel is not a voice channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        pyc.child([str(self.message.guild.id), "lounge"]).set(temp)
+                        pyc.child([str(self.message.guild.id), "lounge"]).set(str(temp))
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the afk channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -830,13 +830,13 @@ class LNG(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (LNG == 0):
+                    if (int(LNG) == 0):
                         title = "No AFK Channels are currently set"
                         description = "Type `.nexal lng set 1234567890`, replacing 1234567890 with the text channel id to set one"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
                     title = "Current AFK Channel"
-                    description = self.message.guild.get_channel(LNG).mention
+                    description = self.message.guild.get_channel(int(LNG)).mention
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -875,7 +875,7 @@ class VLNG(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -896,7 +896,7 @@ class VLNG(Command):
                             description = "This channel is not a voice channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        pyc.child([str(self.message.guild.id), "vet-lounge"]).set(temp)
+                        pyc.child([str(self.message.guild.id), "vet-lounge"]).set(str(temp))
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the veteran afk channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -913,7 +913,7 @@ class VLNG(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (LNG == 0):
+                    if (int(LNG) == 0):
                         title = "No Veteran AFK Channels are currently set"
                         description = "Type `.nexal vet-lng set 1234567890`, replacing 1234567890 with the text channel id to set one"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
@@ -958,7 +958,7 @@ class ELNG(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
@@ -979,7 +979,7 @@ class ELNG(Command):
                             description = "This channel is not a voice channel"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
-                        pyc.child([str(self.message.guild.id), "lounge"]).set(temp)
+                        pyc.child([str(self.message.guild.id), "lounge"]).set(str(temp))
                         
                         title = "Channel " + self.message.guild.get_channel(temp).mention + " has been successfully set as the event afk channel"
                         description = self.message.guild.get_channel(temp).mention
@@ -996,13 +996,13 @@ class ELNG(Command):
                     return
             if (self.message_keys[0] == "list"):
                 if (len(self.message_keys) == 1):
-                    if (LNG == 0):
+                    if (int(LNG) == 0):
                         title = "No Event AFK Channels are currently set"
                         description = "Type `.nexal event-lng set 1234567890`, replacing 1234567890 with the text channel id to set one"
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
                     title = "Current Event AFK Channel"
-                    description = self.message.guild.get_channel(LNG).mention
+                    description = self.message.guild.get_channel(int(LNG)).mention
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
@@ -1042,7 +1042,7 @@ class Role(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = " ".join(self.message_keys[1:])
@@ -1178,4 +1178,3 @@ class Type(Command):
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
 
-            

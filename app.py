@@ -56,6 +56,13 @@ async def on_message(message):
         if (message.content[:7] == ".nexal "):
             message_keys = message.content[7:].split(" ")
             await commands.Main(message, message_keys).dms()
+        if (message.channel.id == 733045203946176612):
+            active_commands = commands.pyc.get_item(["cults-only", "feedback", "commands"])
+            if active_commands is not None:
+                for i in active_commands:
+                    if (active_commands[i]["status"] == "comments"):
+                        await commands.trl_feedback.TrlFeedback().post_message(i, message.content)
+                        break
 
 @commands.client.event
 async def on_reaction_add(reaction, user):
