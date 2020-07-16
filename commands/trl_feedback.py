@@ -94,9 +94,9 @@ class TrlFeedback:
                 print(pyc.get_item(["cults-only", "feedback", "feedback-channel"]))
                 new_description = "Now type in any __Additional Feedback__ below. Note: This is **required**. After this, the feedback will be posted in " + \
                     reaction.message.guild.get_channel(int(pyc.get_item(["cults-only", "feedback", "feedback-channel"]))).mention
-                await sent.edit(embed=create_embed(type_="DM", fields={"title": title, "description": description}))
+                pyc.child(["cults=only", "feedback", "commands", str(reaction.message.id), "status"]).set("comments")
+                await sent.edit(embed=create_embed(type_="DM", fields={"title": sent.embeds[0].title, "description": new_description}))
                 await sent.clear_reactions()
-
             elif ("." in db["status"]):
                 new_status = int(db["status"][:-2]) + 1
                 command_list = ["cults-only", "feedback", "commands", str(reaction.message.id)]
@@ -128,7 +128,7 @@ class TrlFeedback:
                     sent = await reaction.message.channel.fetch_message(pyc.get_item(command_list + ["id"]))
                     new_field = {
                         "name": "Rate Overall (Choose 1 to give a rating out of 10)",
-                        "value": "1️⃣ for worst, 🔟for best"
+                        "value": "1️⃣ for worst, 🔟 for best"
                     }
                     await sent.edit(embed=create_embed(type_="DM", fields={"title": sent.embeds[0].title, "description": sent.embeds[0].description, "fields": [new_field]}))
                     await sent.clear_reactions()
@@ -148,7 +148,7 @@ class TrlFeedback:
                 sent = await reaction.message.channel.fetch_message(pyc.get_item(command_list + ["id"]))
                 new_field = {
                     "name": "Rate " + self.feedback_boxes["c"][int(db["status"])] + " (Choose 1 to give a rating out of 10)",
-                    "value": "1️⃣ for worst, 🔟for best"
+                    "value": "1️⃣ for worst, 🔟 for best"
                 }
                 await sent.edit(embed=create_embed(type_="DM", fields={"title": sent.embeds[0].title, "description": sent.embeds[0].description, "fields": [new_field]}))
                 for i in self.emojis + [self.next] + [self.cancel]:
@@ -160,14 +160,15 @@ class TrlFeedback:
         return
 
 
-    async def post_message(message_id, content):
+    async def post_message(self, message_id, content):
         db = pyc.get_item(["cults-only", "feedback", "commands", message_id])
-        title = "TRL Feedback #" + str(count+1) + " for " + db["trl"] + " " + str(db["Overall"]["rating"]) + "/10"
+        count = pyc.get_item(["cults-only", "feedback", "trls", db["trl"]])
+        title = "TRL Feedback #" + str(count+1) + " for " + db["trl-name"] + " (" + str(db["Overall"]["rating"]) + "/10)"
         description = "Given by: " + db["rl"]
         fields = []
         for i in db:
             if (i in self.items):
-                name = i + " " + str(db[i]["rating"]) + "/10"
+                name = i + " (" + str(db[i]["rating"]) + "/10)"
                 value = ""
                 for j in db[i]["reactions"]:
                     value += self.cancel + " " + self.items[i][j] + "\n"
@@ -177,10 +178,11 @@ class TrlFeedback:
             "value": content,
             "inline": False
         })
-        await client.get_channel(int(db["feedback-channel"])).send(db["trl"], embed=create_embed(type_="DM", fields={"title": title, "description": description, "fields": fields}))
-        await client.get_channel(int(db["bcs"])).fetch_message(int(message_id)).edit(embed=create_embed(type_="REPLY", fields={"title": "TRL Feedback #" + str(count+1) + " for " + db["trl"] + " has ended"}))
+        await client.get_channel(int(pyc.get_item(["cults-only", "feedback", "feedback-channel"]))).send(db["trl"], embed=create_embed(type_="DM", fields={"title": title, "description": description, "fields": fields}))
+        sent = await client.get_channel(int(pyc.get_item(["cults-only", "feedback", "bcs"]))).fetch_message(int(message_id))
+        await sent.edit(embed=create_embed(type_="REPLY", fields={"title": "TRL Feedback #" + str(count+1) + " for " + db["trl-name"] + " has ended"}))
         
         pyc.child(["cults-only", "feedback", "commands", message_id]).remove()
-        pyc.child(["cults-only", "feedback", "trls", db["trl"]]).set(pyc.get_item(["cults-only", "feedback", "trls", db["trl"]]) + 1)
+        pyc.child(["cults-only", "feedback", "trls", db["trl"]]).set(count + 1)
         return
 

@@ -7,7 +7,7 @@ loop = asyncio.get_event_loop()
 @commands.client.event
 async def on_ready():
     print("Ready!")
-    if False:
+    if True:
         title = "Verify for Veteran Cult Runs"
         description = "The long awaited veteran cultist hideout runs have finally arrived in the realm of Cults Only. Steps for verification are listed below"
         fields = [{
@@ -31,7 +31,7 @@ async def on_ready():
             "inline": False
         })
 
-        sent = await commands.client.get_channel(732810331528626226).send("@here", embed=commands.create_embed(type_="DM", fields={"title": title, "description": description, "fields": fields}))
+        sent = await commands.client.get_channel(732946226571640852).send("@here", embed=commands.create_embed(type_="DM", fields={"title": title, "description": description, "fields": fields}))
         await sent.add_reaction("✅")
         await sent.add_reaction("❌")
         print(sent.id)
@@ -56,13 +56,14 @@ async def on_message(message):
         if (message.content[:7] == ".nexal "):
             message_keys = message.content[7:].split(" ")
             await commands.Main(message, message_keys).dms()
-        if (message.channel.id == 733045203946176612):
-            active_commands = commands.pyc.get_item(["cults-only", "feedback", "commands"])
-            if active_commands is not None:
-                for i in active_commands:
-                    if (active_commands[i]["status"] == "comments"):
-                        await commands.trl_feedback.TrlFeedback().post_message(i, message.content)
-                        break
+    if (message.channel.id == 733045203946176612):
+        active_commands = commands.pyc.get_item(["cults-only", "feedback", "commands"])
+        if active_commands is not None:
+            for i in active_commands:
+                if (active_commands[i]["status"] == "comments"):
+                    print('hey')
+                    await commands.trl_feedback.TrlFeedback().post_message(i, message.content)
+                    break
 
 @commands.client.event
 async def on_reaction_add(reaction, user):

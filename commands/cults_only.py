@@ -5,7 +5,7 @@ class VetVerify(Command):
     def __init__(self, message, message_keys):
         super().__init__(message, message_keys)
         self.headers = {"User-Agent": "Mozilla/5.0"}
-        self.vet_rules = 732835519913787422
+        self.vet_rules = 728483562009133076
     
     async def run(self):
         CULT_COUNT = 50
@@ -38,7 +38,7 @@ class VetVerify(Command):
             return
 
         pyc.child(["cults-only", "vet-verify", str(self.message.author.id)]).remove()
-        guild = client.get_guild(715217084900180048)
+        guild = client.get_guild(713844220728967228)
         member = guild.get_member(self.message.author.id)
 
         if IGN.lower() not in member.nick.lower():
@@ -72,6 +72,8 @@ class KeyReact:
         self.payload = payload
     async def run(self):
         payload, user = self.payload, self.payload.member
+        if (payload.message_id != 732946226571640852):
+            return
         if (str(payload.emoji) == "✅"):
             vet_db_list = ["cults-only", "vet-verify", str(user.id)]
             verify_status = pyc.get_item(vet_db_list + ["status"])

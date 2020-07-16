@@ -1117,7 +1117,7 @@ class Type(Command):
             if (self.message_keys[0] == "set"):
                 if (len(self.message_keys) > 1):
                     if (self.message_keys[1] != "-h"):
-                        if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
