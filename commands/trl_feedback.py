@@ -44,9 +44,9 @@ class TrlFeedback:
         }
         
     async def run(self, message, message_keys):
-        if (message.channel.id != 733045203946176612):
+        if (message.channel.id != 733163168960086117):
             title = "TRL Feedback Bot does not work here"
-            description = "Go to " + client.get_channel(pyc.get_item(["cults-only", "feedback", "bcs"])).mention
+            description = "Go to " + client.get_channel(int(pyc.get_item(["cults-only", "feedback", "bcs"]))).mention
             await message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
             return
         run_char = "c"
@@ -91,10 +91,9 @@ class TrlFeedback:
                 command_list = ["cults-only", "feedback", "commands", str(reaction.message.id)]
                 pyc.child(command_list + ["Overall", "rating"]).set(rating)
                 sent = await reaction.message.channel.fetch_message(pyc.get_item(command_list + ["id"]))
-                print(pyc.get_item(["cults-only", "feedback", "feedback-channel"]))
                 new_description = "Now type in any __Additional Feedback__ below. Note: This is **required**. After this, the feedback will be posted in " + \
                     reaction.message.guild.get_channel(int(pyc.get_item(["cults-only", "feedback", "feedback-channel"]))).mention
-                pyc.child(["cults=only", "feedback", "commands", str(reaction.message.id), "status"]).set("comments")
+                pyc.child(["cults-only", "feedback", "commands", str(reaction.message.id), "status"]).set("comments")
                 await sent.edit(embed=create_embed(type_="DM", fields={"title": sent.embeds[0].title, "description": new_description}))
                 await sent.clear_reactions()
             elif ("." in db["status"]):
@@ -114,7 +113,7 @@ class TrlFeedback:
                     sent = await reaction.message.channel.fetch_message(pyc.get_item(command_list + ["id"]))
                     current_items = self.items[new_name]
                     fields = [{
-                        "name": new_name + " (Mark ones the TRL diid NOT do)",
+                        "name": new_name + " (Mark ones the TRL did NOT do)",
                         "value": "\n".join([self.emojis[i] + " " + current_items[i] for i in range(len(current_items))])
                     }]
                     await sent.edit(embed=create_embed(type_="DM", fields={"title": sent.embeds[0].title, "description": sent.embeds[0].description, "fields": fields}))
@@ -170,8 +169,11 @@ class TrlFeedback:
             if (i in self.items):
                 name = i + " (" + str(db[i]["rating"]) + "/10)"
                 value = ""
-                for j in db[i]["reactions"]:
-                    value += self.cancel + " " + self.items[i][j] + "\n"
+                if "reactions" in db[i]:
+                    for j in db[i]["reactions"]:
+                        value += self.cancel + " " + self.items[i][j] + "\n"
+                else:
+                    value = "All Good!"
                 fields.append({"name": name, "value": value, "inline" :False})
         fields.append({
             "name": "Additional Feedback",

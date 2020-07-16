@@ -7,7 +7,7 @@ loop = asyncio.get_event_loop()
 @commands.client.event
 async def on_ready():
     print("Ready!")
-    if True:
+    if False:
         title = "Verify for Veteran Cult Runs"
         description = "The long awaited veteran cultist hideout runs have finally arrived in the realm of Cults Only. Steps for verification are listed below"
         fields = [{
@@ -56,7 +56,7 @@ async def on_message(message):
         if (message.content[:7] == ".nexal "):
             message_keys = message.content[7:].split(" ")
             await commands.Main(message, message_keys).dms()
-    if (message.channel.id == 733045203946176612):
+    if (message.channel.id == 733163168960086117):
         active_commands = commands.pyc.get_item(["cults-only", "feedback", "commands"])
         if active_commands is not None:
             for i in active_commands:

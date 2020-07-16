@@ -244,7 +244,7 @@ class Parse(Command):
 
             # People in Dungeon
             if (len(self.message_keys) > 1):
-                raiders = self.message_keys[1:]
+                raiders = " ".join(self.message_keys[1:])
                 raiders = raiders.replace("\n", " ").replace(",", " ").replace(".", " ").replace("  ", " ")
                 raiders = re.sub(" +", " ", raiders).split(" ")
             else:
@@ -263,7 +263,7 @@ class Parse(Command):
                         raiders.append(i)
 
             # People in VC
-            vc_people = self.message.guild.get_channel(pyc.get_item([str(self.message.guild.id), "vcs"])[channel_number]).members
+            vc_people = self.message.guild.get_channel(int(pyc.get_item([str(self.message.guild.id), "vcs"])[channel_number])).members
 
             crashers = []
             non_crashers = []
@@ -356,7 +356,7 @@ class Parse(Command):
                 only_crashing, crashing_without_reqs, only_not_in_server, not_in_server_reqs = [[], [], [], []]
 
             # Send Message
-            title = "Parse of `" + self.message.guild.get_channel(pyc.get_item([str(self.message.guild.id), "vcs"], [])[channel_number]).name + "` is done"
+            title = "Parse of `" + self.message.guild.get_channel(int(pyc.get_item([str(self.message.guild.id), "vcs"], [])[channel_number])).name + "` is done"
             description = "Parse by: " + self.message.author.mention
             send_messages = {}
             if (len(invisible) != 0):
