@@ -12,7 +12,7 @@ async def addReactions(message, mes_type, rea_type):
         await message.add_reaction(i)
 
 async def changeVCPerms(guild, vc, open):
-    channel = guild.get_channel(pyc.get_item([str(guild.id), "vcs", str(int(vc)-1)]))
+    channel = guild.get_channel(int(pyc.get_item([str(guild.id), "vcs", str(int(vc)-1)])))
     overwrite_dict = {}
     role_name = pyc.get_item([str(guild.id), "reg-role"])
     for i in channel.overwrites:
@@ -58,12 +58,28 @@ class Hc(Command):
                     return
             if (rea_type != "e"):
                 dung_name = {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket", "vc": "Veteran Cultist Hideout"}[rea_type]
-            RSA = pyc.get_item([str(self.message.guild.id), "rsa"])
-            if RSA is None:
-                title = "No RSA Defined"
-                description = "Type `.nexal rsa set -h` to learn how to set a raiding-status-announcments channel for afk checks"
-                await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
-                return
+            print(rea_type)
+            if (rea_type in ["vc"]):
+                RSA = int(pyc.get_item([str(self.message.guild.id), "vet-rsa"]))
+                if RSA is None:
+                    title = "No Veteran RSA Defined"
+                    description = "Type `.nexal vet-rsa set -h` to learn how to set a veteran raiding-status-announcments channel for afk checks"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
+            elif (rea_type == "e"):
+                RSA = int(pyc.get_item([str(self.message.guild.id), "event-rsa"]))
+                if RSA is None:
+                    title = "No Event RSA Defined"
+                    description = "Type `.nexal event-rsa set -h` to learn how to set a event-raiding-status-announcments channel for afk checks"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
+            else:
+                RSA = int(pyc.get_item([str(self.message.guild.id), "rsa"]))
+                if RSA is None:
+                    title = "No RSA Defined"
+                    description = "Type `.nexal rsa set -h` to learn how to set a raiding-status-announcments channel for afk checks"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
             with open("data/emojis.json") as f:
                 data = json.load(f)
             data = data[rea_type]
@@ -118,7 +134,7 @@ class Afk(Command):
                 description = "This VC has not been set yet"
                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                 return
-            VC = self.message.guild.get_channel(VCS[int(self.message_keys[keyed])-1])
+            VC = self.message.guild.get_channel(int(VCS[int(self.message_keys[keyed])-1]))
             loc = " ".join(self.message_keys[1+keyed:])
 
             if pyc.search("-" + self.message_keys[keyed], [str(self.message.guild.id), "afks"]):
@@ -130,21 +146,21 @@ class Afk(Command):
             if (rea_type != "e"):
                 dung_name = {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket", "vc": "Veteran Cultist Hideout"}[rea_type]
             if (rea_type in ["vc"]):
-                RSA = pyc.get_item([str(self.message.guild.id), "vet-rsa"])
+                RSA = int(pyc.get_item([str(self.message.guild.id), "vet-rsa"]))
                 if RSA is None:
                     title = "No Veteran RSA Defined"
                     description = "Type `.nexal vet-rsa set -h` to learn how to set a veteran raiding-status-announcments channel for afk checks"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                     return
             elif (rea_type == "e"):
-                RSA = pyc.get_item([str(self.message.guild.id), "event-rsa"])
+                RSA = int(pyc.get_item([str(self.message.guild.id), "event-rsa"]))
                 if RSA is None:
                     title = "No Event RSA Defined"
                     description = "Type `.nexal event-rsa set -h` to learn how to set a event-raiding-status-announcments channel for afk checks"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                     return
             else:
-                RSA = pyc.get_item([str(self.message.guild.id), "rsa"])
+                RSA = int(pyc.get_item([str(self.message.guild.id), "rsa"]))
                 if RSA is None:
                     title = "No RSA Defined"
                     description = "Type `.nexal rsa set -h` to learn how to set a raiding-status-announcments channel for afk checks"
@@ -161,10 +177,10 @@ class Afk(Command):
             path = pyc.child([str(self.message.guild.id)])
             path.child("afks").child("-" + self.message_keys[keyed]).set({
                 "location": loc,
-                "raid-leader": self.message.author.id,
+                "raid-leader": str(self.message.author.id),
                 "status": "afk",
                 "type": rea_type,
-                "id": sent.id
+                "id": str(sent.id)
             })
 
             await sent.edit(content="")
@@ -209,7 +225,7 @@ class Endafk(Command):
                     description = "Run in this channel has not started yet. To start one, type `.nexal afk -c 1`"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                     return
-            VC = guild.get_channel(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))
+            VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))
             if (pyc.get_item([guild_id, "afks", vc, "status"]) != "afk"):
                 await self.message.channel.send(self.message.author.mention + " AFK in " + VC.name + " has already ended!")
                 return
@@ -218,16 +234,16 @@ class Endafk(Command):
             await changeVCPerms(guild, vc[1:], False)
 
             if pyc.get_item([guild_id, "afks", vc, "type"]) in ["vc"]:
-                RSA = pyc.get_item([guild_id, "vet-rsa"])
-                LNG = pyc.get_item([guild_id, "vet-lounge"])
+                RSA = int(pyc.get_item([guild_id, "vet-rsa"]))
+                LNG = int(pyc.get_item([guild_id, "vet-lounge"]))
             else:
-                RSA = pyc.get_item([guild_id, "rsa"])
-                LNG = pyc.get_item([guild_id, "lounge"])
+                RSA = int(pyc.get_item([guild_id, "rsa"]))
+                LNG = int(pyc.get_item([guild_id, "lounge"]))
 
-            sent = await guild.get_channel(RSA).fetch_message(pyc.get_item([guild_id, "afks", vc, "id"]))
+            sent = await guild.get_channel(RSA).fetch_message(int(pyc.get_item([guild_id, "afks", vc, "id"])))
             portal_icon = sent.reactions[0]
             countdown = 7
-            title = "AFK Check for `" + guild.get_channel(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])).name + "` has ended"
+            title = "AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has ended"
             description = "Join `" + guild.get_channel(LNG).name + "` and re-react to " + str(portal_icon.emoji) + " to get moved back in. You have " + str(countdown) + " seconds left until post-afk ends"
             sent_embed_description = sent.embeds[0].description
             if "\n" in sent_embed_description:
@@ -237,7 +253,7 @@ class Endafk(Command):
             # Kick people out
             reacted_users = await portal_icon.users().flatten()
             reacted_igns = [i.nick for i in reacted_users]
-            for i in guild.get_channel(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])).members:
+            for i in guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).members:
                 if i.nick not in reacted_igns:
                     await i.edit(voice_channel=guild.get_channel(LNG))
 
@@ -251,7 +267,7 @@ class Endafk(Command):
             while (countdown > 1):
                 await asyncio.sleep(1)
                 countdown -= 1
-                title = "AFK Check for `" + guild.get_channel(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])).name + "` has ended"
+                title = "AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has ended"
                 description = "Join `" + guild.get_channel(LNG).name + "` and re-react to " + str(portal_icon.emoji) + " to get moved back in. You have " + str(countdown) + " seconds left until post-afk ends"
                 sent_embed_description = sent.embeds[0].description
                 if "\n" in sent_embed_description:
@@ -259,7 +275,7 @@ class Endafk(Command):
                 await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
 
             await asyncio.sleep(1)
-            title = "Post-AFK Check for `" + guild.get_channel(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])).name + "` has ended"
+            title = "Post-AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has ended"
             description = "Wait for the next run to begin"
             await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
 
@@ -296,7 +312,7 @@ class KeyReact:
             is_afk = False
             guild_id = str(reaction.message.guild.id)
             for i in pyc.get_item([guild_id, "afks"]):
-                if ((pyc.get_item([guild_id, "afks", i, "id"]) == reaction.message.id) and \
+                if ((pyc.get_item([guild_id, "afks", i, "id"]) == str(reaction.message.id)) and \
                     (pyc.get_item([guild_id, "afks", i, "type"]) in self.key_types[str(reaction.emoji)]) and \
                     (pyc.get_item([guild_id, "afks", i, "status"]) == "afk")):
                     is_afk = i
@@ -306,17 +322,17 @@ class KeyReact:
             current_afk_list = [guild_id, "afks", is_afk]
             key_dms = pyc.get_item(current_afk_list + ["key-reacts"], [])
             for i in key_dms:
-                if (user.id == client.get_channel(i).recipient.id):
+                if (user.id == client.get_channel(int(i)).recipient.id):
                     return
             if (user.dm_channel is None):
                 await user.create_dm()
             sent_dm = await user.dm_channel.send("Thank you for reacting to the key. React to the :white_check_mark: to confirm your intention. Not: Fake reacts will result in a suspension")
             await sent_dm.add_reaction("✅")
 
-            key_dms.append(sent_dm.id)
+            key_dms.append(str(sent_dm.channel.id))
             pyc.child(current_afk_list + ["key-reacts"]).set(key_dms)
-            vars.db.child("key-react-dms").child(sent_dm.id).set({
-                "guild": reaction.message.guild.id,
+            vars.db.child("key-react-dms").child(str(sent_dm.id)).set({
+                "guild": str(reaction.message.guild.id),
                 "afk-number": is_afk,
                 "key": str(reaction.emoji)
             })
@@ -332,11 +348,11 @@ class KeyReact:
             key_dms = pyc.get_item(current_afk_list + ["key-reacts"], [])
 
             if pyc.get_item([guild_id, "afks", is_afk, "type"]) in ["vc"]:
-                channel = client.get_channel(pyc.get_item([guild_id, "vet-rsa"]))
+                channel = client.get_channel(int(pyc.get_item([guild_id, "vet-rsa"])))
             else:
-                channel = client.get_channel(pyc.get_item([guild_id, "rsa"]))
+                channel = client.get_channel(int(pyc.get_item([guild_id, "rsa"])))
 
-            sent = await channel.fetch_message(pyc.get_item([guild_id, "afks", is_afk, "id"]))
+            sent = await channel.fetch_message(int(pyc.get_item([guild_id, "afks", is_afk, "id"])))
             sent_embed = sent.embeds[0]
             loc = pyc.get_item(current_afk_list + ["location"])
             key_emoji = pyc.get_item(["key-react-dms", str(reaction.message.id), "key"])
@@ -348,16 +364,21 @@ class KeyReact:
                 await user.dm_channel.send("The location is `" + loc + "` You are the main key")
                 new_description = sent_embed.description + "\n\nMain " + key_emoji + ": " + user.mention
                 await sent.edit(embed=create_embed(type_="basic", fields={"title": sent_embed.title, "description": new_description}))
-            elif (len(key_reacts) < 2):
+            elif (len(key_reacts) < 3):
                 await user.dm_channel.send("You are the backup key. If the RL wants backup keys to come to the location, he or she will DM you")
+                if (len(key_reacts) == 1):
+                    new_description = sent_embed.description + "\n\Backup " + key_emoji + ":"
+                new_description +- " " + user.mention
+                await sent.edit(embed=create_embed(type_="basic", fields={"title": sent_embed.title, "description": new_description}))
             else:
                 await user.dm_channel.send("We already have 3 key reacts at the moment")
 
-            key_reacts.append(user.id)
-            pyc.child(current_afk_list + ["keys"]).set(key_reacts)
-            key_dms.remove(reaction.message.id)
-            pyc.child(current_afk_list + ["key-reacts"]).set(key_dms)
-            vars.db.child("key-react-dms").child(str(reaction.message.id)).remove()
+            if (len(key_reacts) < 3):
+                key_reacts.append(str(user.id))
+                pyc.child(current_afk_list + ["keys"]).set(key_reacts)
+                key_dms.remove(str(reaction.message.channel.id))
+                pyc.child(current_afk_list + ["key-reacts"]).set(key_dms)
+                vars.db.child("key-react-dms").child(str(reaction.message.id)).remove()
             return True
         # Move Raiders Back
         if (reaction.message.author.id != user.id and str(reaction.emoji) in self.portals):
@@ -368,13 +389,13 @@ class KeyReact:
             afks = pyc.get_item([guild_id, "afks"], {})
             foundAFK = False
             for i in afks:
-                if (afks[i]["id"] == reaction.message.id):
+                if (int(afks[i]["id"]) == reaction.message.id):
                     foundAFK = i
             if not foundAFK:
                 return
 
             VC_id = pyc.get_item([guild_id, "vcs"])[int(foundAFK[1:])-1]
-            await user.edit(voice_channel=guild.get_channel(VC_id))
+            await user.edit(voice_channel=guild.get_channel(int(VC_id)))
             return True
         return
 

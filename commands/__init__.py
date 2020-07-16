@@ -108,16 +108,16 @@ class Main(SuperCommand):
                 return
 
     async def reaction(self, reaction, user):
-        try:
-            react = await afk.KeyReact(reaction, user).run()
-        except:
-            react = False
+        react = await afk.KeyReact(reaction, user).run()
+        #try:
+         #   react = await afk.KeyReact(reaction, user).run()
+        #except:
+        #    react = False
         if not react:
-            react = await trl_feedback.TrlFeedback().KeyReact(reaction, user)
-            #try:
-            #    react = await trl_feedback.TrlFeedback.KeyReact(reaction, user)
-            #except:
-            #    react = False
+            try:
+                react = await trl_feedback.TrlFeedback.KeyReact(reaction, user)
+            except:
+                react = False
         
     async def raw_reaction(self, payload):
         if (payload.message_id == 733141028197892179):
