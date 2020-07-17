@@ -96,6 +96,11 @@ class Main(SuperCommand):
             await trl_feedback.TrlFeedback().run(self.message, self.message_keys[1:])
             return
 
+        # Misc
+        if (self.message_keys[0] == "deathcount"):
+            await misc.DeathCount(self.message, self.message_keys[1:]).run()
+            return
+
     async def dms(self):
         #####
         # Special

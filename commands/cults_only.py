@@ -66,8 +66,6 @@ class VetVerify(Command):
         description = "Check " + client.get_channel(self.vet_rules).mention + " as veteran rules differ from its regular counterpart"
         await user.dm_channel.send(embed=create_embed(type_="DM", fields={"title": title, "description": description}))
         return
-        
-
 
 class KeyReact:
     def __init__(self, payload):
