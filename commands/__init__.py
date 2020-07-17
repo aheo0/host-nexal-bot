@@ -113,14 +113,14 @@ class Main(SuperCommand):
                 return
 
     async def reaction(self, reaction, user):
-        react = await afk.KeyReact(reaction, user).run()
-        #try:
-         #   react = await afk.KeyReact(reaction, user).run()
-        #except:
-        #    react = False
+        try:
+            react = await afk.KeyReact(reaction, user).run()
+        except:
+            react = False
         if not react:
+            react = await trl_feedback.TrlFeedback().KeyReact(reaction, user)
             try:
-                react = await trl_feedback.TrlFeedback.KeyReact(reaction, user)
+                print("test")
             except:
                 react = False
         

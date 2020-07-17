@@ -146,6 +146,13 @@ class Variables():
                 role = i
         return role
 
+    def cleanse_mention(self, name):
+        real_name = ""
+        for i in name:
+            if i in "1234567890":
+                real_name += i
+        return real_name
+
 
 vars = Variables()
 pyc = PyrebaseCommands(vars.db)

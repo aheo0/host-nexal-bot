@@ -61,7 +61,6 @@ async def on_message(message):
         if active_commands is not None:
             for i in active_commands:
                 if (active_commands[i]["status"] == "comments"):
-                    print('hey')
                     await commands.trl_feedback.TrlFeedback().post_message(i, message.content)
                     break
 

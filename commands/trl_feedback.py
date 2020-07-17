@@ -54,7 +54,7 @@ class TrlFeedback:
         count = pyc.get_item(["cults-only", "feedback", "trls", str(message_keys[0]), "count"], 0)
         if (len(message_keys) > 1):
             count = int("".join(message_keys[1:])) - 1
-        trl_name = message.guild.get_member(int(message_keys[0][3:-1])).nick
+        trl_name = message.guild.get_member(int(vars.cleanse_mention(message_keys[0]))).nick
         title = "TRL Feedback #" + str(count+1) + " started for " + trl_name
         description = "React to the according emojis " + self.emojis[0] + ", " + self.emojis[1] + ", " + self.emojis[2] + ", etc. to mark the respective choice(s)"
         current_items = self.items[self.feedback_boxes["c"][1]]
@@ -78,7 +78,9 @@ class TrlFeedback:
         return
 
     async def KeyReact(self, reaction, user):
+        print("hi")
         db = pyc.get_item(["cults-only", "feedback", "commands", str(reaction.message.id)])
+        print("hi")
         if (reaction.message.author.id == user.id or db["status"] == "comments"):
             return
         if (str(reaction.emoji) == self.next):
