@@ -41,7 +41,7 @@ class Setup(Command):
 
     async def delete_data(self):
         if (len(self.message_keys) == 0):
-            if not pyc.search_val(self.message.author.id, [str(self.message.guild.id), "admins"]):
+            if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
                 await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                 return
             
