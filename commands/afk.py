@@ -197,10 +197,10 @@ class Afk(Command):
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
 
-class Endafk(Command):
+class Abortafk(Command):
     def __init__(self, message, message_keys):
         super().__init__(message, message_keys)
-        self.help_text = "Ends AFK"
+        self.help_text = "Aborts AFK"
 
     async def run(self):
         if (len(self.message_keys) == 0 or self.message_keys[0] != "-h"):
@@ -221,8 +221,8 @@ class Endafk(Command):
             else:
                 vc = "-" + self.message_keys[0]
                 if not pyc.search(vc, [guild_id, "afks"]):
-                    title = "End AFK Command Error"
-                    description = "Run in this channel has not started yet. To start one, type `.nexal afk -c 1`"
+                    title = "Abort AFK Command Error"
+                    description = "Run in this channel has not started yet"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                     return
             VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))

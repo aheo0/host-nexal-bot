@@ -80,7 +80,7 @@ class Main(SuperCommand):
             await afk.Afk(self.message, self.message_keys[1:]).run()
             return
         if (self.message_keys[0] == "abortafk"):
-            await afk.Endafk(self.message, self.message_keys[1:]).run()
+            await afk.Abortafk(self.message, self.message_keys[1:]).run()
             return
         if (self.message_keys[0] == "endafk"):
             await afk.Endafk(self.message, self.message_keys[1:]).run()
