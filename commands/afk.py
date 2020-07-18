@@ -214,6 +214,66 @@ class Endafk(Command):
                             vc = i
                             break
                 else:
+                    title = "Abort AFK Command Error"
+                    description = "In order to use this shortcut, only one afk check must be up"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
+            else:
+                vc = "-" + self.message_keys[0]
+                if not pyc.search(vc, [guild_id, "afks"]):
+                    title = "End AFK Command Error"
+                    description = "Run in this channel has not started yet. To start one, type `.nexal afk -c 1`"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                    return
+            VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))
+
+            await changeVCPerms(guild, vc[1:], False)
+
+            if pyc.get_item([guild_id, "afks", vc, "type"]) in ["vc"]:
+                RSA = int(pyc.get_item([guild_id, "vet-rsa"]))
+                LNG = int(pyc.get_item([guild_id, "vet-lounge"]))
+            else:
+                RSA = int(pyc.get_item([guild_id, "rsa"]))
+                LNG = int(pyc.get_item([guild_id, "lounge"]))
+
+            sent = await guild.get_channel(RSA).fetch_message(int(pyc.get_item([guild_id, "afks", vc, "id"])))
+
+            # Edit Message
+            title = "AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has been aborted"
+            description = "Wait for the next afk check to start"
+            await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+
+            # Kill AFK in Database
+            pyc.child([guild_id, "afks", vc]).remove()
+
+            return
+        if (len(self.message_keys) > 0 and self.message_keys[0] == "-h"):
+            help_messages = {
+                "help": self.help_text
+            }
+            title = "Info on command `abortafk`"
+            description = ""
+            fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description, "fields": fields}))
+            return
+
+class Endafk(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+        self.help_text = "Ends AFK"
+
+    async def run(self):
+        if (len(self.message_keys) == 0 or self.message_keys[0] != "-h"):
+            guild = self.message.guild
+            guild_id = str(guild.id)
+            afks = pyc.get_item([guild_id, "afks"], [])
+            if (len(self.message_keys) == 0):
+                if (len(afks) == 1):
+                    for i in afks:
+                        if i is not None:
+                            vc = i
+                            break
+                else:
                     title = "End AFK Command Error"
                     description = "In order to use this shortcut, only one afk check must be up. To start one, type `.nexal afk -c 1`"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
@@ -287,7 +347,7 @@ class Endafk(Command):
             help_messages = {
                 "help": self.help_text
             }
-            title = "Info on command `endrun`"
+            title = "Info on command `endafk`"
             description = ""
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
             await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description, "fields": fields}))

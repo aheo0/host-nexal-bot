@@ -78,9 +78,7 @@ class TrlFeedback:
         return
 
     async def KeyReact(self, reaction, user):
-        print("hi")
         db = pyc.get_item(["cults-only", "feedback", "commands", str(reaction.message.id)])
-        print("hi")
         if (reaction.message.author.id == user.id or db["status"] == "comments"):
             return
         if (str(reaction.emoji) == self.next):
