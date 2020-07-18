@@ -47,6 +47,9 @@ class Help(Command):
                     "auto-parse": "Turns on or off the bot's auto-parsing feature of the vc for requirements which will activate \"auto-time\" amount of seconds after afk has ended. ie. .nexal_auto-parse_on",
                     "auto-time": "Amount of seconds to wait before bot auto-parses, if auto-parsing is turned on. ie. .nexal_auto-time_set_30",
                     "vc": "Lists everyone currently in the voice channel. This can be used to track down alts of crashers/draggers in vc. ie. .nexal_vc_1"
+                },
+                "MISCELLANEOUS": {
+                    "deathcount": "Tracks staff kills in runs. A fun way to see how many times one staff has killed another"
                 }
 
             }
