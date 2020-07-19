@@ -85,9 +85,12 @@ class Main(SuperCommand):
         if (self.message_keys[0] == "endafk"):
             await afk.Endafk(self.message, self.message_keys[1:]).run()
             return
-        #if (self.message_keys[0] == "endrun"):
-        #    await afk.Endrun(self.message, self.message_keys[1:]).run()
-        #    return
+        if (self.message_keys[0] == "logkeys"):
+            await afk.Logkeys(self.message, self.message_keys[1:]).run()
+            return
+        if (self.message_keys[0] == "runlogs"):
+            await afk.Runlogs(self.message, self.message_keys[1:]).run()
+            return
 
         # Parse
         if (self.message_keys[0] == "parse"):

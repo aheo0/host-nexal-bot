@@ -134,6 +134,19 @@ class Variables():
         
         self.db = pyrebase.initialize_app(self.pyrebase_config).database()
 
+        self.dung_types = {
+            "c": "Cultist Hideout",
+            "v": "Void",
+            "st": "Secluded Thicket",
+            "vc": "Veteran Cultist Hideout",
+            "e": "Event",
+            "vial": "Vial"
+        }
+        self.vets = {
+            "vc": "Veteran Cultist Hideout"
+        }
+        self.events = {"e": "Event"}
+
     async def not_nexal_admin_speech(self, channel, member):
         title = "Permission Error"
         description = "You need nexal admin permissions to run this command!"

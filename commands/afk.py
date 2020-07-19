@@ -1,5 +1,5 @@
 from command import *
-import json, pyrebase, asyncio
+import json, pyrebase, asyncio, time
 
 
 async def addReactions(message, mes_type, rea_type):
@@ -352,6 +352,161 @@ class Endafk(Command):
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
             await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description, "fields": fields}))
             return
+
+class Logkeys(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            guild = self.message.guild
+            guild_id = str(guild.id)          
+            if (self.message_keys[0][0] == "-"):
+                type_char = self.message_keys[0][1:]
+                self.message_keys = self.message_keys[1:]
+            else:
+                type_char = pyc.get_item([guild_id, "type"])
+            type_ = vars.dung_types[type_char]
+
+            key_popper_id = vars.cleanse_mention(self.message_keys[0])
+            if (key_popper_id == ""):
+                return
+            key_add = 1
+            if (len(self.message_keys) > 1):
+                key_add = int(self.message_keys[1])
+            key_total_count = pyc.get_item([guild_id, "logs", "key-logs", key_popper_id, "total"], 0) + key_add
+            key_type_count = pyc.get_item([guild_id, "logs", "key-logs", key_popper_id, type_], 0) + key_add
+            pyc.child([guild_id, "logs", "key-logs", key_popper_id, "total"]).set(key_total_count)
+            pyc.child([guild_id, "logs", "key-logs", key_popper_id, type_]).set(key_type_count)
+
+            await self.message.add_reaction("✅")
+            if (type_ in vars.vets):
+                RSA = pyc.get_item([guild_id, "vet-rsa"])
+            elif (type_ in vars.events):
+                RSA = pyc.get_item([guild_id, "event-rsa"])
+            else:
+                RSA = pyc.get_item([guild_id, "rsa"])
+            channel = guild.get_channel(int(RSA))
+            name = guild.get_member(int(key_popper_id)).nick
+            await channel.send("**" + name + "** has popped " + str(key_type_count) + " " + type_ + " keys for the raiders! Her/his total key pop: " + str(key_total_count))
+            return
+        if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
+            title = "Info on command `logkeys`"
+            description = ""
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+            return
+
+class Runlogs(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def add(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            guild = self.message.guild
+            guild_id = str(guild.id)          
+            if (self.message_keys[0][0] == "-"):
+                type_char = self.message_keys[0][1:]
+                self.message_keys = self.message_keys[1:]
+            else:
+                type_char = pyc.get_item([guild_id, "type"])
+            type_ = vars.dung_types[type_char]
+
+            if self.message_keys[0] not in  ["s", "f"]:
+                return
+            run_type = self.message_keys[0]
+            self.message_keys = self.message_keys[1:]
+
+            leader = vars.cleanse_mention(self.message_keys[0])
+            assists = []
+            if (len(self.message_keys) > 1):
+                for i in self.message_keys[1:]:
+                    assists.append(vars.cleanse_mention(i))
+            if (leader == ""):
+                return
+
+            guild = self.message.guild
+            guild_id = str(guild.id)
+            total_count = pyc.get_item([guild_id, "logs", "run-logs", "members", leader, "count"], {})
+            if (run_type == "s"):
+                if "Leads" in total_count:
+                    total_count["Leads"] += 1
+                else:
+                    total_count["Leads"] = 1
+                if "types" in total_count and type_ in total_count["types"]:
+                    total_count["types"][type_] += 1
+                elif "types" in total_count:
+                    total_count["types"][type_] = 1
+                else:
+                    total_count["types"] = {type_: 1}
+            elif (run_type == "f"):
+                if "Fails" in total_count:
+                    total_count["Fails"] += 1
+                else:
+                    total_count["Fails"] = 1
+            pyc.child([guild_id, "logs", "run-logs", "members", leader, "count"]).set(total_count)
+
+            for i in assists:
+                total_count = pyc.get_item([guild_id, "logs", "run-logs", "members", i, "count"], {})
+                if "Assists" in total_count:
+                    total_count["Assists"] += 1
+                else:
+                    total_count["Assists"] = 1
+                pyc.child([guild_id, "logs", "run-logs", "members", i, "count"]).set(total_count)
+
+            log = {
+                "Lead": leader,
+                "Assists": assists,
+                "Time": str(int(time.time())),
+                "Type": type_
+            }
+            logs = pyc.get_item([guild_id, "logs", "run-logs", "logs"], [])
+            logs.append(log)
+            pyc.child([guild_id, "logs", "run-logs", "logs"]).set(logs)            
+
+            await self.message.add_reaction("✅")
+            return
+        if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
+            title = "Info on command `runlogs add`"
+            description = ""
+            fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+            return
+
+    async def recent(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            guild = self.message.guild
+            guild_id = str(guild.id)          
+            
+            
+
+            return
+        if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
+            title = "Info on command `runlogs recent`"
+            description = "Displays the runs logged in the last week"
+            fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+            return
+
+    
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            if (len(self.message_keys) == 0):
+                return
+            if (self.message_keys[0] == "add"):
+                self.message_keys = self.message_keys[1:]
+                await self.add()
+                return
+            if (self.message_keys[0] == "recent"):
+                self.message_keys = self.message_keys[1:]
+                await self.add()
+                return
+            return
+        if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
+            title = "Info on command `runlogs`"
+            description = ""
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+            return
+
 
 class KeyReact:
     def __init__(self, reaction, user):

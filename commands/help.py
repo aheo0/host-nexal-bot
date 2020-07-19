@@ -41,6 +41,9 @@ class Help(Command):
                     "hc": "Starts up an headcount. ie. .nexal_hc or .nexal_c_hc for a cultist hideout headcount. Type .nexal_hc_-h to see the different HC/AFKs you can start",
                     "afk": "Starts up an AFK check. ie. .nexal_afk_1_AustraliaSouthEast_Down",
                     "endafk": "Ends AFK. ie. .nexal_endafk_1",
+                    "abortafk": "Aborts AFK. ie. .nexal_abortafk_1",
+                    "logkeys": "Logs keys",
+                    "runlogs": "Logs runs"
                 },
                 "PARSE": {
                     "parse": "Parses raiders for requirements. ie. .nexal_parse_1 and add a screenshot of the /who command with a black background. You can also list the raiders after the command separated by either a comma, period, space, or a newline ie. .nexal_parse_1_MeApollo_nexal",
