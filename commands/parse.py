@@ -424,6 +424,17 @@ class Parse(Command):
                 fields.append({"name": "All Good!", "value": "Everybody parsed is in the voice channel and meets reqs", "inline": False})
             
             await self.message.channel.send(self.message.author.mention, embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+
+            if (self.message.guild.id == 713844220728967228):
+                # Cults Only Bouncers Output
+                bouncer = False
+                for i in self.message.author.roles:
+                    if (str(i.name) == "Bouncer"):
+                        bouncer = True
+                        break
+
+                if bouncer:
+                    await client.get_guild(713844220728967228).get_channel(713844221530079273).send(i.mention + " parsed for stats in vc # " + str(int(channel_number)+1))
             return
         if (len(self.message_keys) > 0 and self.message_keys[0] == "-h"):
             help_messages = {

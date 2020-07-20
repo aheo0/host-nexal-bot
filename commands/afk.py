@@ -486,8 +486,8 @@ class Runlogs(Command):
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
             await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
             return
+ 
 
-    
     async def run(self):
         if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
             if (len(self.message_keys) == 0):
