@@ -539,7 +539,7 @@ class Runlogs(Command):
                 return
             if (self.message_keys[0] == "recent"):
                 self.message_keys = self.message_keys[1:]
-                await self.add()
+                await self.recent()
                 return
             return
         if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
