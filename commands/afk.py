@@ -482,13 +482,16 @@ class Runlogs(Command):
             i = -1
             logs = pyc.get_item([str(self.message.guild.id), "logs", "run-logs", "logs"], [])
             data = {}
-            while (-1 * i <= len(logs)):
+            while (i * -1 <= len(logs)):
                 temp = logs[i]
                 if (int(temp["Time"]) < week_before):
                     break
-                for i in [temp["Lead"]] + temp["Assists"]:
-                    if i not in data:
-                        data[i] = {
+                assists = []
+                if ("Assists" in temp):
+                    assists = temp["Assists"]
+                for j in [temp["Lead"]] + assists:
+                    if j not in data:
+                        data[j] = {
                             "Leads": 0,
                             "Assists": 0,
                             "Vet Leads": 0,
@@ -501,8 +504,10 @@ class Runlogs(Command):
                         data[temp["Lead"]]["Vet Leads"] = data[temp["Lead"]]["Vet Leads"] + 1
                 else:
                     data[temp["Lead"]]["Fails"] = data[temp["Lead"]]["Fails"] + 1
-                for i in temp["Assists"]:
-                    data[i]["Assists"] = data[i]["Assists"] + 1
+                for j in assists:
+                    data[j]["Assists"] = data[j]["Assists"] + 1
+
+                i -= 1
 
             title = "Run Statistics of the Last 7 Days"
             if (len(logs) == 0):
@@ -512,9 +517,10 @@ class Runlogs(Command):
 
             fields = []
             for i in data:
+                member = self.message.guild.get_member(int(i))
                 fields.append({
-                    "name": self.message.guild.get_member(int(i)) + " Leads: " + str(logs[i]["Leads"]) + " Assists: " + str(logs[i]["Assists"]),
-                    "value": "Vet Leads: " + str(logs[i]["Vet Leads"]) + " Fails: " + str(logs[i]["Fails"]),
+                    "name": "Leads: " + str(data[i]["Leads"]) + " Assists: " + str(data[i]["Assists"]),
+                    "value": member.mention + " Vet Leads: " + str(data[i]["Vet Leads"]) + " Fails: " + str(data[i]["Fails"]),
                     "inline": False
             })
 
