@@ -495,12 +495,30 @@ class Runlogs(Command):
                             "Fails": 0
                         }
 
-                if 
+                if (temp["Success"] == 1):
                     data[temp["Lead"]]["Leads"] = data[temp["Lead"]]["Leads"] + 1
                     if (temp["Type"].split(" ")[0] == "Veteran"):
                         data[temp["Lead"]]["Vet Leads"] = data[temp["Lead"]]["Vet Leads"] + 1
+                else:
+                    data[temp["Lead"]]["Fails"] = data[temp["Lead"]]["Fails"] + 1
+                for i in temp["Assists"]:
+                    data[i]["Assists"] = data[i]["Assists"] + 1
 
+            title = "Run Statistics of the Last 7 Days"
+            if (len(logs) == 0):
+                description = "No runs have occurred in the last 7 days"
+            else:
+                description = "Runs occurred in the last 7 days"
 
+            fields = []
+            for i in data:
+                fields.append({
+                    "name": self.message.guild.get_member(int(i)) + " Leads: " + str(logs[i]["Leads"]) + " Assists: " + str(logs[i]["Assists"]),
+                    "value": "Vet Leads: " + str(logs[i]["Vet Leads"]) + " Fails: " + str(logs[i]["Fails"])
+                    "inline": False
+            })
+
+            await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description": description, "fields": fields}))
 
             return
         if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
