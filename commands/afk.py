@@ -474,7 +474,7 @@ class Runlogs(Command):
             return
 
     async def recent(self):
-        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+        if (len(self.message_keys) == 0 or self.message_keys[0] != "-h"):
             guild = self.message.guild
             guild_id = str(guild.id)          
             
@@ -521,7 +521,7 @@ class Runlogs(Command):
             await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description": description, "fields": fields}))
 
             return
-        if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
+        if (len(self.message_keys) > 0 and self.message_keys[0] == "-h"):
             title = "Info on command `runlogs recent`"
             description = "Displays the runs logged in the last week"
             fields = [{"name": i, "value": help_messages[i], "inline": True} for i in help_messages]
