@@ -434,7 +434,7 @@ class Parse(Command):
                         break
 
                 if bouncer:
-                    await client.get_guild(713844220728967228).get_channel(713844221530079273).send(i.mention + " parsed for stats in vc # " + str(int(channel_number)+1))
+                    await client.get_guild(713844220728967228).get_channel(713844221530079273).send(self.message.author.mention + " parsed for stats in vc # " + str(int(channel_number)+1))
             return
         if (len(self.message_keys) > 0 and self.message_keys[0] == "-h"):
             help_messages = {
