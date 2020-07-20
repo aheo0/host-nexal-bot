@@ -514,7 +514,7 @@ class Runlogs(Command):
             for i in data:
                 fields.append({
                     "name": self.message.guild.get_member(int(i)) + " Leads: " + str(logs[i]["Leads"]) + " Assists: " + str(logs[i]["Assists"]),
-                    "value": "Vet Leads: " + str(logs[i]["Vet Leads"]) + " Fails: " + str(logs[i]["Fails"])
+                    "value": "Vet Leads: " + str(logs[i]["Vet Leads"]) + " Fails: " + str(logs[i]["Fails"]),
                     "inline": False
             })
 
