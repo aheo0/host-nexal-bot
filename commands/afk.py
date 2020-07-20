@@ -457,7 +457,8 @@ class Runlogs(Command):
                 "Lead": leader,
                 "Assists": assists,
                 "Time": str(int(time.time())),
-                "Type": type_
+                "Type": type_,
+                "Success": 1 if (run_type == "s") else 0
             }
             logs = pyc.get_item([guild_id, "logs", "run-logs", "logs"], [])
             logs.append(log)
@@ -477,7 +478,29 @@ class Runlogs(Command):
             guild = self.message.guild
             guild_id = str(guild.id)          
             
-            
+            week_before = int(time.time()) - 7*86400
+            i = -1
+            logs = pyc.get_item([str(self.message.guild.id), "logs", "run-logs", "logs"], [])
+            data = {}
+            while (-1 * i <= len(logs)):
+                temp = logs[i]
+                if (int(temp["Time"]) < week_before):
+                    break
+                for i in [temp["Lead"]] + temp["Assists"]:
+                    if i not in data:
+                        data[i] = {
+                            "Leads": 0,
+                            "Assists": 0,
+                            "Vet Leads": 0,
+                            "Fails": 0
+                        }
+
+                if 
+                    data[temp["Lead"]]["Leads"] = data[temp["Lead"]]["Leads"] + 1
+                    if (temp["Type"].split(" ")[0] == "Veteran"):
+                        data[temp["Lead"]]["Vet Leads"] = data[temp["Lead"]]["Vet Leads"] + 1
+
+
 
             return
         if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
