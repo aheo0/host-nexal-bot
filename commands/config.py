@@ -531,6 +531,134 @@ class VCS(Command):
                 fields.append({"name": name, "value": value, "inline": inline})
             await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
             return
+class VetVCS(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            VCS = pyc.get_item([str(self.message.guild.id), "vet-vcs"], [])
+            if (self.message_keys[0] == "add"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        try:
+                            temp = int(temp)
+                        except:
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if str(temp) not in VCS:
+                            if (self.message.guild.get_channel(temp) is None):
+                                title = "Channel ID Error"
+                                description = "No channel with this ID exists in this server"
+                                await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                                return
+                            if (str(self.message.guild.get_channel(temp).type) != "voice"):
+                                title = "Channel ID Error"
+                                description = "This channel is not a voice channel"
+                                await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                                return
+                            pyc.child([str(self.message.guild.id), "vet-vcs"]).set(VCS + [str(temp)])
+                            
+                            title = "New raiding voice channel " + self.message.guild.get_channel(temp).mention + " has been successfully added"
+                            description = self.message.guild.get_channel(temp).mention
+                            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+                            return
+                        else:
+                            title = "Raiding voice channel " + self.message.guild.get_channel(temp).mention + " already exists"
+                            description = self.message.guild.get_channel(temp).mention
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                    else:
+                        title = "Info on command `vet-vcs add`"
+                        description = "Adds a new raiding voice channel. Enter the ID of the voice channel after the command. ie. `.nexal vet-vcs add 1234567890`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "del"):
+                if (len(self.message_keys) > 1):
+                    if (self.message_keys[1] != "-h"):
+                        if not pyc.search_val(str(self.message.author.id), [str(self.message.guild.id), "admins"]):
+                            await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
+                            return
+                        temp = self.message_keys[1]
+                        try:
+                            temp = int(temp)
+                        except:
+                            title = "Channel ID Error"
+                            description = "No channel with this ID exists in this server"
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                        if str(temp) in VCS:
+                            if (self.message.guild.get_channel(temp) is None):
+                                title = "Channel ID Error"
+                                description = "No channel with this ID exists in this server"
+                                await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                                return
+                            VCS.remove(str(temp))
+                            pyc.child([str(self.message.guild.id), "vcs"]).set(VCS)
+                            
+                            title = "Raiding voice channel " + self.message.guild.get_channel(temp).mention + " has been successfully deleted"
+                            description = self.message.guild.get_channel(temp).mention
+                            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
+                            return
+                        else:
+                            title = self.message.guild.get_channel(temp).mention + " is not a raiding voice channel"
+                            description = self.message.guild.get_channel(temp).mention
+                            await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
+                            return
+                    else:
+                        title = "Info on command `vet-vcs del`"
+                        description = "Deletes a raiding voice channel. Enter the ID of the voice channel after the command. ie. `.nexal vcs del 1234567890`"
+                        await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                        return
+                else:
+                    title = "No Channel ID Entered"
+                    await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
+                    return
+            if (self.message_keys[0] == "list"):
+                if (len(self.message_keys) == 1):
+                    title = "Available Raiding Voice Channels"
+                    description = ""
+                    for i in VCS:
+                        description += self.message.guild.get_channel(int(i)).mention + " "
+                    await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
+                    return
+                if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
+                    title = "Info on command `vcs list`"
+                    description = "Lists all raiding voice channels. ie. `.nexal vet-vcs list`"
+                    await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+                    return
+
+        if (self.message_keys[0] == "-h"):
+            help_messages = {
+                "COMMANDS": {
+                    "add": "Adds a new raiding voice channel. Enter the ID of the voice channel after the command. ie. .nexal_vet-vcs_add_1234567890",
+                    "del": "Deletes a raiding voice channel. Enter the ID of the voice channel after the command. ie. .nexal_vet-vcs_del_1234567890",
+                    "list": "Lists all raiding voice channels. ie. .nexal_vet-vcs_list"
+                }
+            }
+            title = "Info on command `vet-vcs`"
+            description = "Modifies or lists the raiding voice channels"
+            fields = []
+            for i in help_messages:
+                name = i
+                inline = False
+                value = "```css\n"
+                for j in help_messages[i]:
+                    value += "[" + j + "] " + help_messages[i][j] + "\n"
+                value += "```"
+                fields.append({"name": name, "value": value, "inline": inline})
+            await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title, "description": description, "fields": fields}))
+            return
 
 class RSA(Command):
     def __init__(self, message, message_keys):

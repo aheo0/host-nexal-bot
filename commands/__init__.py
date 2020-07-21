@@ -47,6 +47,9 @@ class Main(SuperCommand):
         if (self.message_keys[0] == "vcs"):
             await config.VCS(self.message, self.message_keys[1:]).run()
             return
+        if (self.message_keys[0] == "vet-vcs"):
+            await config.VetVCS(self.message, self.message_keys[1:]).run()
+            return
         if (self.message_keys[0] == "rsa"):
             await config.RSA(self.message, self.message_keys[1:]).run()
             return

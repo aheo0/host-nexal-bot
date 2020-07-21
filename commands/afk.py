@@ -11,8 +11,8 @@ async def addReactions(message, mes_type, rea_type):
     for i in data[rea_type]:
         await message.add_reaction(i)
 
-async def changeVCPerms(guild, vc, open):
-    channel = guild.get_channel(int(pyc.get_item([str(guild.id), "vcs", str(int(vc)-1)])))
+async def changeVCPerms(guild, channel_, open):
+    channel = channel_
     overwrite_dict = {}
     role_name = pyc.get_item([str(guild.id), "reg-role"])
     for i in channel.overwrites:
@@ -128,7 +128,15 @@ class Afk(Command):
                 title = "No VC Set"
                 await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title}))
                 return
-            VCS = pyc.get_item([str(self.message.guild.id), "vcs"])
+
+            db_path_name = self.message_keys[keyed]
+            if (self.message_keys[keyed][0] == "v"):
+                VCS = pyc.get_item([str(self.message.guild.id), "vet-vcs"])
+                self.message_keys[keyed] = self.message_keys[keyed][1:]
+            else:
+                VCS = pyc.get_item([str(self.message.guild.id), "vcs"])
+
+
             if (VCS is None or (int(self.message_keys[keyed]) > len(VCS))):
                 title = "No VC Set"
                 description = "This VC has not been set yet"
@@ -175,7 +183,7 @@ class Afk(Command):
             sent = await self.message.guild.get_channel(RSA).send("@here", embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
 
             path = pyc.child([str(self.message.guild.id)])
-            path.child("afks").child("-" + self.message_keys[keyed]).set({
+            path.child("afks").child("-" + db_path_name).set({
                 "location": loc,
                 "raid-leader": str(self.message.author.id),
                 "status": "afk",
@@ -184,7 +192,7 @@ class Afk(Command):
             })
 
             await sent.edit(content="")
-            await changeVCPerms(self.message.guild, self.message_keys[keyed], True)
+            await changeVCPerms(self.message.guild, VC, True)
             await addReactions(sent, rea_type, "afk")
             return
         if (self.message_keys[0] == "-h"):
@@ -225,9 +233,12 @@ class Abortafk(Command):
                     description = "Run in this channel has not started yet"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                     return
-            VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))
+            if (vc[1] == "v"):
+                VC = guild.get_channel(int(pyc.get_item([guild_id, "vet-vcs", str(int(vc[2:])-1)])))
+            else:
+                VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))
 
-            await changeVCPerms(guild, vc[1:], False)
+            await changeVCPerms(guild, VC, False)
 
             if pyc.get_item([guild_id, "afks", vc, "type"]) in ["vc"]:
                 RSA = int(pyc.get_item([guild_id, "vet-rsa"]))
@@ -239,7 +250,7 @@ class Abortafk(Command):
             sent = await guild.get_channel(RSA).fetch_message(int(pyc.get_item([guild_id, "afks", vc, "id"])))
 
             # Edit Message
-            title = "AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has been aborted"
+            title = "AFK Check for `" + VC.name + "` has been aborted"
             description = "Wait for the next afk check to start"
             await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
 
@@ -285,13 +296,15 @@ class Endafk(Command):
                     description = "Run in this channel has not started yet. To start one, type `.nexal afk -c 1`"
                     await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                     return
-            VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))
+            if (vc[1] == "v"):
+                VC = guild.get_channel(int(pyc.get_item([guild_id, "vet-vcs", str(int(vc[2:])-1)])))
+            else:
+                VC = guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)])))
             if (pyc.get_item([guild_id, "afks", vc, "status"]) != "afk"):
                 await self.message.channel.send(self.message.author.mention + " AFK in " + VC.name + " has already ended!")
                 return
-            pyc.child([guild_id, "afks", vc, "status"]).set("post-afk")
 
-            await changeVCPerms(guild, vc[1:], False)
+            await changeVCPerms(guild, VC, False)
 
             if pyc.get_item([guild_id, "afks", vc, "type"]) in ["vc"]:
                 RSA = int(pyc.get_item([guild_id, "vet-rsa"]))
@@ -303,7 +316,7 @@ class Endafk(Command):
             sent = await guild.get_channel(RSA).fetch_message(int(pyc.get_item([guild_id, "afks", vc, "id"])))
             portal_icon = sent.reactions[0]
             countdown = 7
-            title = "AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has ended"
+            title = "AFK Check for `" + VC.name + "` has ended"
             description = "Join `" + guild.get_channel(LNG).name + "` and re-react to " + str(portal_icon.emoji) + " to get moved back in. You have " + str(countdown) + " seconds left until post-afk ends"
             sent_embed_description = sent.embeds[0].description
             if "\n" in sent_embed_description:
@@ -313,7 +326,7 @@ class Endafk(Command):
             # Kick people out
             reacted_users = await portal_icon.users().flatten()
             reacted_igns = [i.nick for i in reacted_users]
-            for i in guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).members:
+            for i in VC.members:
                 if i.nick not in reacted_igns:
                     await i.edit(voice_channel=guild.get_channel(LNG))
 
@@ -327,7 +340,7 @@ class Endafk(Command):
             while (countdown > 1):
                 await asyncio.sleep(1)
                 countdown -= 1
-                title = "AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has ended"
+                title = "AFK Check for `" + VC.name + "` has ended"
                 description = "Join `" + guild.get_channel(LNG).name + "` and re-react to " + str(portal_icon.emoji) + " to get moved back in. You have " + str(countdown) + " seconds left until post-afk ends"
                 sent_embed_description = sent.embeds[0].description
                 if "\n" in sent_embed_description:
@@ -335,7 +348,7 @@ class Endafk(Command):
                 await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
 
             await asyncio.sleep(1)
-            title = "Post-AFK Check for `" + guild.get_channel(int(pyc.get_item([guild_id, "vcs", str(int(vc[1:])-1)]))).name + "` has ended"
+            title = "Post-AFK Check for `" + VC.name + "` has ended"
             description = "Wait for the next run to begin"
             await sent.edit(embed=create_embed(type_="BASIC", fields={"title": title, "description": description}))
 
@@ -656,7 +669,10 @@ class KeyReact:
             if not foundAFK:
                 return
 
-            VC_id = pyc.get_item([guild_id, "vcs"])[int(foundAFK[1:])-1]
+            if (foundAFK[1] == "v"):
+                VC_id = pyc.get_item([guild_id, "vet-vcs"])[int(foundAFK[2:])-1]
+            else:
+                VC_id = pyc.get_item([guild_id, "vcs"])[int(foundAFK[1:])-1]
             await user.edit(voice_channel=guild.get_channel(int(VC_id)))
             return True
         return
