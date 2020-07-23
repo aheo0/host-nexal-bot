@@ -315,7 +315,7 @@ class Endafk(Command):
 
             sent = await guild.get_channel(RSA).fetch_message(int(pyc.get_item([guild_id, "afks", vc, "id"])))
             portal_icon = sent.reactions[0]
-            countdown = 7
+            countdown = 15
             title = "AFK Check for `" + VC.name + "` has ended"
             description = "Join `" + guild.get_channel(LNG).name + "` and re-react to " + str(portal_icon.emoji) + " to get moved back in. You have " + str(countdown) + " seconds left until post-afk ends"
             sent_embed_description = sent.embeds[0].description
@@ -643,7 +643,7 @@ class KeyReact:
                 await user.dm_channel.send("You are the backup key. If the RL wants backup keys to come to the location, he or she will DM you")
                 if (len(key_reacts) == 1):
                     new_description = sent_embed.description + "\n\Backup " + key_emoji + ":"
-                new_description +- " " + user.mention
+                new_description += " " + user.mention
                 await sent.edit(embed=create_embed(type_="basic", fields={"title": sent_embed.title, "description": new_description}))
             else:
                 await user.dm_channel.send("We already have 3 key reacts at the moment")

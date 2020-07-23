@@ -36,6 +36,7 @@ async def on_ready():
         await sent.add_reaction("❌")
         print(sent.id)
 
+
 @commands.client.event
 async def on_message(message):
     if (message.guild is not None):

@@ -49,7 +49,7 @@ class Help(Command):
                     "parse": "Parses raiders for requirements. ie. .nexal_parse_1 and add a screenshot of the /who command with a black background. You can also list the raiders after the command separated by either a comma, period, space, or a newline ie. .nexal_parse_1_MeApollo_nexal",
                     "auto-parse": "Turns on or off the bot's auto-parsing feature of the vc for requirements which will activate \"auto-time\" amount of seconds after afk has ended. ie. .nexal_auto-parse_on",
                     "auto-time": "Amount of seconds to wait before bot auto-parses, if auto-parsing is turned on. ie. .nexal_auto-time_set_30",
-                    "vc": "Lists everyone currently in the voice channel. This can be used to track down alts of crashers/draggers in vc. ie. .nexal_vc_1"
+                    "parselist": "Lists everyone currently in the voice channel. This can be used to track down alts of crashers/draggers in vc. ie. .nexal_parselist_1"
                 },
                 "MISCELLANEOUS": {
                     "deathcount": "Tracks staff kills in runs. A fun way to see how many times one staff has killed another"

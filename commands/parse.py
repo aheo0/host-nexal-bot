@@ -459,4 +459,39 @@ class Parse(Command):
             return
 
 
+class ParseList(Command):
+    def __init__(self, message, message_keys):
+        super().__init__(message, message_keys)
+
+    async def run(self):
+        if (len(self.message_keys) > 0 and self.message_keys[0] != "-h"):
+            channel_number = self.message_keys[0]
+            if (channel_number[0] == "v"):
+                channel_id = pyc.get_item([str(self.message.guild.id), "vet-vcs"])[int(channel_number[1:]) - 1]
+            else:
+                channel_id = pyc.get_item([str(self.message.guild.id), "vcs"])[int(channel_number) - 1]
+            vc_people = self.message.guild.get_channel(int(channel_id)).members
+
+            IGNS = []
+            for i in vc_people:
+                temp = i.display_name
+                while temp[0].lower() not in "qwertyuiopasdfghjklzxcvbnm":
+                    temp = temp[1:]
+                if "|" in temp:
+                    for i in temp.split("|"):
+                        IGNS.append(i.replace(" ", "")).upper()
+                else:
+                    IGNS.append(temp.upper())
+            IGNS = sorted(IGNS)
+
+            title = "Raiders in `" + self.message.guild.get_channel(int(channel_id)).name + "`"
+            description = ", ".join(IGNS)
+            await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description": description}))
+            return
+
+        if (len(self.message_keys) > 0 and self.message_keys[0] == "-h"):
+            title = "Info on command `parselist`"
+            description = "Type `.nexal parselist 1` or replace 1 with the vc number to list the raiders in vc"
+            await self.message.channel.send(embed=create_embed(type_="HELP-MENU", fields={"title": title, "description": description}))
+            return
 

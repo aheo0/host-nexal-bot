@@ -99,6 +99,9 @@ class Main(SuperCommand):
         if (self.message_keys[0] == "parse"):
             await parse.Parse(self.message, self.message_keys[1:]).run()
             return
+        if (self.message_keys[0] == "parselist"):
+            await parse.ParseList(self.message, self.message_keys[1:]).run()
+            return
 
         # TRL Feedback
         if (self.message_keys[0] == "trl-feedback"):
