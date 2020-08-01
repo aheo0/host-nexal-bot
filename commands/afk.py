@@ -400,7 +400,7 @@ class Logkeys(Command):
             else:
                 RSA = pyc.get_item([guild_id, "rsa"])
             channel = guild.get_channel(int(RSA))
-            name = guild.get_member(int(key_popper_id)).nick
+            name = guild.get_member(int(key_popper_id)).display_name
             await channel.send("**" + name + "** has popped " + str(key_type_count) + " " + type_ + " keys for the raiders! Her/his total key pop: " + str(key_total_count))
             return
         if (len(self.message_keys) == 0 and self.message_keys[0] == "-h"):
@@ -642,7 +642,7 @@ class KeyReact:
             elif (len(key_reacts) < 3):
                 await user.dm_channel.send("You are the backup key. If the RL wants backup keys to come to the location, he or she will DM you")
                 if (len(key_reacts) == 1):
-                    new_description = sent_embed.description + "\n\Backup " + key_emoji + ":"
+                    new_description = sent_embed.description + "\nBackup " + key_emoji + ":"
                 new_description += " " + user.mention
                 await sent.edit(embed=create_embed(type_="basic", fields={"title": sent_embed.title, "description": new_description}))
             else:
@@ -677,3 +677,4 @@ class KeyReact:
             return True
         return
 
+s
