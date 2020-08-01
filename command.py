@@ -139,6 +139,7 @@ class Variables():
             "v": "Void",
             "st": "Secluded Thicket",
             "vc": "Veteran Cultist Hideout",
+            "e": "Event",
             "vial": "Vial"
         }
         self.vets = {
