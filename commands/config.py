@@ -1249,14 +1249,14 @@ class Type(Command):
                             await vars.not_nexal_admin_speech(self.message.channel, self.message.author)
                             return
                         temp = self.message_keys[1]
-                        if (temp not in ["c", "v", "st"]):
+                        if (temp not in ["c", "v", "st", "o3"]):
                             title = "Type Error"
                             description = "No type exists with those acronyms. Type `.nexal type -h` to learn how to set an AFK type in this server"
                             await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description": description}))
                             return
                         pyc.child([str(self.message.guild.id), "type"]).set(temp)
                         
-                        title = "The default AFK type has been set to `" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket"}[temp] + "`"
+                        title = "The default AFK type has been set to `" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket", "o3": "Oryx 3"}[temp] + "`"
                         await self.message.channel.send(embed=create_embed(type_="BASIC", fields={"title": title}))
                         return
                     else:
@@ -1276,7 +1276,7 @@ class Type(Command):
                         await self.message.channel.send(embed=create_embed(type_="ERROR", fields={"title": title, "description":description}))
                         return
                     title = "Current AFK Type"
-                    description = "`" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket"}[TYPE] + "`"
+                    description = "`" + {"c": "Cultist Hideout", "v": "Void", "st": "Secluded Thicket", "o3": "Oryx 3"}[TYPE] + "`"
                     await self.message.channel.send(embed=create_embed(type_="REPLY", fields={"title": title, "description":description}))
                     return
                 if (len(self.message_keys) > 0 and self.message_keys[1] == "-h"):
