@@ -35,6 +35,23 @@ async def on_ready():
         await sent.add_reaction("✅")
         await sent.add_reaction("❌")
         print(sent.id)
+    if False:
+        title = "Verify for Wonderland"
+        description = "The long awaited verify bot has finally arrived in the realm of Woland. Steps for verification are listed below"
+        fields = [{
+            "name": "Requirements",
+            "value": "__Visible Realmeye Graveyard__",
+            "inline": False
+        }]
+        fields.append({
+            "name": "To Finish...",
+            "value": "React to ✅ to finish the verification process via a DM from the bot",
+            "inline": False
+        })
+
+        sent = await commands.client.get_channel(744167364073095232).send("@here", embed=commands.create_embed(type_="DM", fields={"title": title, "description": description, "fields": fields}))
+        await sent.add_reaction("✅")
+        print(sent.id)
 
 
 @commands.client.event
@@ -56,6 +73,9 @@ async def on_message(message):
     else:
         if (message.content[:7] == ".nexal "):
             message_keys = message.content[7:].split(" ")
+            await commands.Main(message, message_keys).dms()
+        else:
+            message_keys = message.content.split(" ")
             await commands.Main(message, message_keys).dms()
     if (message.channel.id == 733163168960086117):
         active_commands = commands.pyc.get_item(["cults-only", "feedback", "commands"])

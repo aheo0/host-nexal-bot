@@ -123,6 +123,12 @@ class Main(SuperCommand):
             if (len(self.message_keys) > 0 and self.message_keys[0] == "verify"):
                 await cults_only.VetVerify(self.message, self.message_keys[1:]).run()
                 return
+        # - # Wonderland
+        if (str(self.message.channel.type) == "private"):
+            # Verify
+            if (len(self.message_keys) > 0):
+                await verify.Verify(self.message, self.message_keys).run()
+                return
 
     async def reaction(self, reaction, user):
         try:
@@ -138,3 +144,10 @@ class Main(SuperCommand):
     async def raw_reaction(self, payload):
         if (payload.message_id == 733141028197892179):
             react = await cults_only.KeyReact(payload).run()
+            if (react):
+                return
+        channel = await client.fetch_channel(payload.channel_id)
+        if (payload.message_id == 744479057026089030 or str(channel.type) == "private"):
+            react = await verify.KeyReact(payload).run()
+            if (react):
+                return
